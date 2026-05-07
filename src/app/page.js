@@ -110,8 +110,8 @@ export default function Home() {
             marginBottom: '2rem'
           }}>
             <span className="gradient-text" style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>UPCOMING:</span>
-            <div className="marquee" style={{ display: 'flex', gap: '2rem', animation: 'scroll 20s linear infinite' }}>
-              {upcoming.map((p, i) => (
+            <div className="marquee">
+              {[...upcoming, ...upcoming].map((p, i) => (
                 <span key={i} style={{ whiteSpace: 'nowrap', fontWeight: '500' }}>
                   ⚡ {p.Program_Name} <span style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>({p.Category})</span>
                 </span>
