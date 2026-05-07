@@ -11,28 +11,63 @@ export default function Home() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const teamData = await fetchData('Teams');
-        const memberData = await fetchData('Members');
-        const resultData = await fetchData('Results');
+        // Fetch all data in parallel for speed
+        const [teamData, memberData, resultData] = await Promise.all([
+          fetchData('Teams'),
+          fetchData('Members'),
+          fetchData('Results')
+        ]);
         
-        if (Array.isArray(teamData)) {
-          setTeams(teamData.sort((a, b) => (b.Total_Points || 0) - (a.Total_Points || 0)));
-        }
+        // --- REAL-TIME CALCULATION ---
+        const teamTotals = {};
+        const memberTotals = {};
         
-        if (Array.isArray(memberData)) {
-          setMembers(memberData.sort((a, b) => (b.Individual_Points || 0) - (a.Individual_Points || 0)).slice(0, 10));
-        }
-        
-        if (Array.isArray(resultData)) {
-          const groupedResults = {};
-          resultData.forEach(r => {
-            if (r.Program_ID) {
-              if (!groupedResults[r.Program_ID]) groupedResults[r.Program_ID] = [];
-              groupedResults[r.Program_ID].push(r);
+        // 1. Initialize totals from the base lists
+        teamData.forEach(t => teamTotals[t.Team_Name] = 0);
+        memberData.forEach(m => memberTotals[m.Member_Name] = { pts: 0, team: m.Team_ID });
+
+        // 2. Sum up every result ever recorded
+        resultData.forEach(r => {
+          const pts = parseInt(r.Points_Awarded) || 0;
+          const winner = r.Winner_ID;
+          
+          // If it's a member winning, add to their total AND their team's total
+          if (memberTotals[winner]) {
+            memberTotals[winner].pts += pts;
+            const teamOfMember = memberTotals[winner].team;
+            if (teamTotals[teamOfMember] !== undefined) {
+              teamTotals[teamOfMember] += pts;
             }
-          });
-          setResults(Object.entries(groupedResults).reverse());
-        }
+          } 
+          // If a Team won directly (Group event), add to team total
+          else if (teamTotals[winner] !== undefined) {
+            teamTotals[winner] += pts;
+          }
+        });
+
+        // 3. Update the display lists with calculated points
+        const calculatedTeams = teamData.map(t => ({
+          ...t,
+          Total_Points: teamTotals[t.Team_Name] || 0
+        })).sort((a, b) => b.Total_Points - a.Total_Points);
+
+        const calculatedMembers = memberData.map(m => ({
+          ...m,
+          Individual_Points: memberTotals[m.Member_Name]?.pts || 0
+        })).sort((a, b) => b.Individual_Points - a.Individual_Points).slice(0, 10);
+
+        setTeams(calculatedTeams);
+        setMembers(calculatedMembers);
+        
+        // Group results for the "Recent Results" section
+        const groupedResults = {};
+        resultData.forEach(r => {
+          const id = r.Program_ID || 'Unknown';
+          if (!groupedResults[id]) groupedResults[id] = [];
+          groupedResults[id].push(r);
+        });
+        setResults(Object.entries(groupedResults).reverse());
+
       } catch (err) {
         console.error("Error loading home data:", err);
       }
