@@ -10,21 +10,32 @@ export default function Home() {
 
   useEffect(() => {
     const loadData = async () => {
-      const teamData = await fetchData('Teams');
-      const memberData = await fetchData('Members');
-      const resultData = await fetchData('Results');
-      
-      setTeams(teamData.sort((a, b) => b.Total_Points - a.Total_Points));
-      setMembers(memberData.sort((a, b) => b.Individual_Points - a.Individual_Points).slice(0, 10));
-      
-      // Group results by program
-      const groupedResults = {};
-      resultData.forEach(r => {
-        if (!groupedResults[r.Program_ID]) groupedResults[r.Program_ID] = [];
-        groupedResults[r.Program_ID].push(r);
-      });
-      setResults(Object.entries(groupedResults).reverse()); // Newest first
-      
+      try {
+        const teamData = await fetchData('Teams');
+        const memberData = await fetchData('Members');
+        const resultData = await fetchData('Results');
+        
+        if (Array.isArray(teamData)) {
+          setTeams(teamData.sort((a, b) => (b.Total_Points || 0) - (a.Total_Points || 0)));
+        }
+        
+        if (Array.isArray(memberData)) {
+          setMembers(memberData.sort((a, b) => (b.Individual_Points || 0) - (a.Individual_Points || 0)).slice(0, 10));
+        }
+        
+        if (Array.isArray(resultData)) {
+          const groupedResults = {};
+          resultData.forEach(r => {
+            if (r.Program_ID) {
+              if (!groupedResults[r.Program_ID]) groupedResults[r.Program_ID] = [];
+              groupedResults[r.Program_ID].push(r);
+            }
+          });
+          setResults(Object.entries(groupedResults).reverse());
+        }
+      } catch (err) {
+        console.error("Error loading home data:", err);
+      }
       setLoading(false);
     };
     loadData();
@@ -78,10 +89,10 @@ export default function Home() {
                 <div key={index} style={{ padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '16px' }}>
                   <h3 style={{ color: 'var(--accent-primary)', marginBottom: '1rem', fontSize: '1.1rem' }}>{programName}</h3>
                   <div style={{ display: 'grid', gap: '0.5rem' }}>
-                    {winners.sort((a,b) => a.Position.localeCompare(b.Position)).map((w, i) => (
+                    {(winners || []).sort((a,b) => (a.Position || '').localeCompare(b.Position || '')).map((w, i) => (
                       <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
-                        <span>{w.Position === '1st' ? '🥇' : w.Position === '2nd' ? '🥈' : '🥉'} {w.Winner_ID}</span>
-                        <span style={{ color: 'var(--text-dim)' }}>{w.Points_Awarded} pts</span>
+                        <span>{w.Position === '1st' ? '🥇' : w.Position === '2nd' ? '🥈' : '🥉'} {w.Winner_ID || 'Unknown'}</span>
+                        <span style={{ color: 'var(--text-dim)' }}>{w.Points_Awarded || 0} pts</span>
                       </div>
                     ))}
                   </div>

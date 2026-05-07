@@ -5,6 +5,7 @@ export const fetchData = async (tab) => {
     const response = await fetch(`/api/sheet?tab=${tab}`);
     if (!response.ok) throw new Error('Network response was not ok');
     const data = await response.json();
+    if (!Array.isArray(data) || data.length === 0) return [];
     
     // Assuming first row is headers
     const headers = data[0].map(h => h.toString().trim().replace(/\s+/g, '_'));
