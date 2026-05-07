@@ -99,21 +99,24 @@ export default function Home() {
       <div style={{ padding: '0 5%' }}>
         {upcoming.length > 0 && (
           <div style={{ 
-            background: 'linear-gradient(90deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1))',
-            padding: '1rem',
-            borderRadius: '16px',
+            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(168, 85, 247, 0.05))',
+            padding: '1.2rem',
+            borderRadius: '20px',
             border: '1px solid var(--glass-border)',
             display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
+            flexDirection: 'column',
+            gap: '0.8rem',
             overflow: 'hidden',
-            marginBottom: '2rem'
+            marginBottom: '3rem'
           }}>
-            <span className="gradient-text" style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>UPCOMING:</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-primary)', boxShadow: '0 0 10px var(--accent-primary)' }}></div>
+              <span style={{ fontWeight: 'bold', fontSize: '0.8rem', letterSpacing: '0.1em', color: 'var(--text-dim)' }}>UPCOMING EVENTS</span>
+            </div>
             <div className="marquee">
               {[...upcoming, ...upcoming].map((p, i) => (
-                <span key={i} style={{ whiteSpace: 'nowrap', fontWeight: '500' }}>
-                  ⚡ {p.Program_Name} <span style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>({p.Category})</span>
+                <span key={i} style={{ whiteSpace: 'nowrap', fontWeight: '500', fontSize: '1.1rem' }}>
+                  ⚡ {p.Program_Name} <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>({p.Category})</span>
                 </span>
               ))}
             </div>
