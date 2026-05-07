@@ -174,3 +174,20 @@ nav {
 .nav-links a:hover {
   color: white;
 }
+
+/* Marquee Animation */
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee {
+  display: flex;
+  gap: 2rem;
+  animation: scroll 30s linear infinite;
+  width: max-content;
+}
+
+.marquee:hover {
+  animation-play-state: paused;
+}
