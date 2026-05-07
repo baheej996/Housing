@@ -6,16 +6,18 @@ export default function Home() {
   const [teams, setTeams] = useState([]);
   const [members, setMembers] = useState([]);
   const [results, setResults] = useState([]);
+  const [upcoming, setUpcoming] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       try {
         // Fetch all data in parallel for speed
-        const [teamData, memberData, resultData] = await Promise.all([
+        const [teamData, memberData, resultData, programData] = await Promise.all([
           fetchData('Teams'),
           fetchData('Members'),
-          fetchData('Results')
+          fetchData('Results'),
+          fetchData('Programs')
         ]);
         
         // --- REAL-TIME CALCULATION ---
@@ -61,12 +63,19 @@ export default function Home() {
         
         // Group results for the "Recent Results" section
         const groupedResults = {};
+        const completedProgramIds = new Set();
+        
         resultData.forEach(r => {
           const id = r.Program_ID || 'Unknown';
+          completedProgramIds.add(id);
           if (!groupedResults[id]) groupedResults[id] = [];
           groupedResults[id].push(r);
         });
         setResults(Object.entries(groupedResults).reverse());
+
+        // Find upcoming programs (those in Programs tab but NOT in Results tab)
+        const upcomingList = programData.filter(p => !completedProgramIds.has(p.Program_Name));
+        setUpcoming(upcomingList);
 
       } catch (err) {
         console.error("Error loading home data:", err);
@@ -87,7 +96,30 @@ export default function Home() {
         </div>
       </nav>
 
-      <div style={{ padding: '2rem 5%' }}>
+      <div style={{ padding: '0 5%' }}>
+        {upcoming.length > 0 && (
+          <div style={{ 
+            background: 'linear-gradient(90deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1))',
+            padding: '1rem',
+            borderRadius: '16px',
+            border: '1px solid var(--glass-border)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+            overflow: 'hidden',
+            marginBottom: '2rem'
+          }}>
+            <span className="gradient-text" style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>UPCOMING:</span>
+            <div className="marquee" style={{ display: 'flex', gap: '2rem', animation: 'scroll 20s linear infinite' }}>
+              {upcoming.map((p, i) => (
+                <span key={i} style={{ whiteSpace: 'nowrap', fontWeight: '500' }}>
+                  ⚡ {p.Program_Name} <span style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>({p.Category})</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         <header style={{ textAlign: 'center', marginBottom: '4rem' }}>
           <h1 style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>Housing <span className="gradient-text">Grand Finale</span></h1>
           <p style={{ color: 'var(--text-dim)', fontSize: '1.2rem' }}>Real-time standings and program achievements</p>
