@@ -99,24 +99,30 @@ export default function Home() {
       <div style={{ padding: '0 5%' }}>
         {upcoming.length > 0 && (
           <div style={{ 
-            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(168, 85, 247, 0.05))',
-            padding: '1.2rem',
-            borderRadius: '20px',
+            background: 'rgba(255,255,255,0.03)',
+            padding: '0',
+            borderRadius: '16px',
             border: '1px solid var(--glass-border)',
             display: 'flex',
-            flexDirection: 'column',
-            gap: '0.8rem',
+            alignItems: 'center',
             overflow: 'hidden',
-            marginBottom: '3rem'
+            marginBottom: '3rem',
+            position: 'relative'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-primary)', boxShadow: '0 0 10px var(--accent-primary)' }}></div>
-              <span style={{ fontWeight: 'bold', fontSize: '0.8rem', letterSpacing: '0.1em', color: 'var(--text-dim)' }}>UPCOMING EVENTS</span>
+            <div style={{ 
+              background: 'linear-gradient(90deg, #121215 80%, transparent)',
+              padding: '1rem 2rem',
+              zIndex: '10',
+              position: 'relative',
+              fontWeight: 'bold',
+              whiteSpace: 'nowrap'
+            }}>
+              <span className="gradient-text">UPCOMING</span>
             </div>
-            <div className="marquee">
+            <div className="marquee" style={{ zIndex: '1' }}>
               {[...upcoming, ...upcoming].map((p, i) => (
-                <span key={i} style={{ whiteSpace: 'nowrap', fontWeight: '500', fontSize: '1.1rem' }}>
-                  ⚡ {p.Program_Name} <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>({p.Category})</span>
+                <span key={i} style={{ whiteSpace: 'nowrap', fontWeight: '500' }}>
+                  ⚡ {p.Program_Name} <span style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>({p.Category})</span>
                 </span>
               ))}
             </div>
