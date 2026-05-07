@@ -124,12 +124,24 @@ export default function Home() {
                 <div key={index} style={{ padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '16px' }}>
                   <h3 style={{ color: 'var(--accent-primary)', marginBottom: '1rem', fontSize: '1.1rem' }}>{programName}</h3>
                   <div style={{ display: 'grid', gap: '0.5rem' }}>
-                    {(winners || []).sort((a,b) => (a.Position || '').localeCompare(b.Position || '')).map((w, i) => (
-                      <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
-                        <span>{w.Position === '1st' ? '🥇' : w.Position === '2nd' ? '🥈' : '🥉'} {w.Winner_ID || 'Unknown'}</span>
-                        <span style={{ color: 'var(--text-dim)' }}>{w.Points_Awarded || 0} pts</span>
-                      </div>
-                    ))}
+                    {(winners || []).sort((a,b) => (a.Position || '').localeCompare(b.Position || '')).map((w, i) => {
+                      const winnerName = w.Winner_ID;
+                      const memberInfo = members.find(m => m.Member_Name === winnerName);
+                      const teamName = memberInfo ? memberInfo.Team_ID : (teams.some(t => t.Team_Name === winnerName) ? winnerName : '');
+
+                      return (
+                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
+                          <span>
+                            {w.Position === '1st' ? '🥇' : w.Position === '2nd' ? '🥈' : '🥉'} 
+                            <span style={{ fontWeight: '500', marginLeft: '0.5rem' }}>{winnerName}</span>
+                            {teamName && teamName !== winnerName && (
+                              <span style={{ color: 'var(--text-dim)', fontSize: '0.75rem', marginLeft: '0.5rem' }}>({teamName})</span>
+                            )}
+                          </span>
+                          <span style={{ color: 'var(--text-dim)' }}>{w.Points_Awarded || 0} pts</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
