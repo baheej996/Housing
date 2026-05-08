@@ -5,15 +5,23 @@ export default function TeamChart({ results, teams }) {
   const chartData = useMemo(() => {
     if (!results || results.length === 0 || !teams || teams.length === 0) return null;
 
-    // 1. Get unique dates and sort them
-    const dates = [...new Set(results.map(r => r.Timestamp))].sort((a, b) => new Date(a) - new Date(b));
+    // 1. Get unique dates/timestamps
+    const uniqueTimestamps = [...new Set(results.map(r => r.Timestamp || 'TBD'))];
     
-    // 2. Calculate cumulative points for each team at each date
+    // Sort them: Try to sort as dates, if fail, sort as strings
+    const sortedTimestamps = uniqueTimestamps.sort((a, b) => {
+      const dateA = new Date(a);
+      const dateB = new Date(b);
+      if (!isNaN(dateA) && !isNaN(dateB)) return dateA - dateB;
+      return a.toString().localeCompare(b.toString());
+    });
+    
+    // 2. Calculate cumulative points for each team at each point
     const teamPaths = teams.map(team => {
       let cumulative = 0;
-      const points = dates.map(date => {
+      const points = sortedTimestamps.map(ts => {
         const dailyPoints = results
-          .filter(r => r.Timestamp === date && r.Team_ID === team.Team_Name)
+          .filter(r => (r.Timestamp || 'TBD') === ts && r.Team_ID === team.Team_Name)
           .reduce((sum, r) => sum + (parseInt(r.Points_Awarded) || 0), 0);
         cumulative += dailyPoints;
         return cumulative;
@@ -21,7 +29,7 @@ export default function TeamChart({ results, teams }) {
       return { name: team.Team_Name, points };
     });
 
-    return { dates, teamPaths };
+    return { dates: sortedTimestamps, teamPaths };
   }, [results, teams]);
 
   if (!chartData) return null;
@@ -96,11 +104,15 @@ export default function TeamChart({ results, teams }) {
         })}
 
         {/* X-Axis Labels */}
-        {dates.map((date, i) => (
-          <text key={i} x={getX(i)} y={height - 10} fill="rgba(255,255,255,0.3)" fontSize="10" textAnchor="middle">
-            {new Date(date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-          </text>
-        ))}
+        {dates.map((date, i) => {
+          const d = new Date(date);
+          const label = isNaN(d) ? date : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+          return (
+            <text key={i} x={getX(i)} y={height - 10} fill="rgba(255,255,255,0.3)" fontSize="10" textAnchor="middle">
+              {label}
+            </text>
+          );
+        })}
       </svg>
       
       {/* Legend */}
