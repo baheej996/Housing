@@ -80,7 +80,8 @@ export default function ResultEntry() {
   if (loading) return <div style={{ padding: '2rem' }}>Loading data...</div>;
 
   const program = programs.find(p => p.Program_Name === selectedProgram);
-  const optionsList = program?.Category === 'Group' ? teams.map(t => t.Team_Name) : members.map(m => m.Member_Name);
+  const isTeamEvent = program?.Category === 'Group' || program?.Category === 'Specials';
+  const optionsList = isTeamEvent ? teams.map(t => t.Team_Name) : members.map(m => m.Member_Name);
 
   return (
     <main style={{ padding: '2rem 5%' }}>
