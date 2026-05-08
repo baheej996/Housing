@@ -10,12 +10,36 @@ export default function AdminDashboard() {
     { name: 'Settings', desc: 'Configure point distribution', icon: '⚙️', href: '/admin/settings' },
   ];
 
+  const handleLogout = async () => {
+    await fetch('/api/logout', { method: 'POST' });
+    window.location.href = '/';
+  };
+
   return (
     <main style={{ padding: '2rem 5%' }}>
-      <header style={{ marginBottom: '3rem' }}>
-        <Link href="/" style={{ color: 'var(--text-dim)', textDecoration: 'none', fontSize: '0.9rem' }}>← Back to Public Site</Link>
-        <h1 style={{ fontSize: '2.5rem', marginTop: '1rem' }}>Admin <span className="gradient-text">Control Center</span></h1>
-        <p style={{ color: 'var(--text-dim)' }}>Manage every aspect of the Housing Program</p>
+      <header style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <Link href="/" style={{ color: 'var(--text-dim)', textDecoration: 'none', fontSize: '0.9rem' }}>← Back to Public Site</Link>
+          <h1 style={{ fontSize: '2.5rem', marginTop: '1rem' }}>Admin <span className="gradient-text">Control Center</span></h1>
+          <p style={{ color: 'var(--text-dim)' }}>Manage every aspect of the Housing Program</p>
+        </div>
+        <button 
+          onClick={handleLogout}
+          style={{
+            background: 'rgba(239, 68, 68, 0.1)',
+            color: '#ef4444',
+            border: '1px solid rgba(239, 68, 68, 0.2)',
+            padding: '0.6rem 1.2rem',
+            borderRadius: '12px',
+            cursor: 'pointer',
+            fontWeight: '600',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseOver={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'}
+          onMouseOut={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'}
+        >
+          Sign Out
+        </button>
       </header>
 
       <div className="admin-grid">
