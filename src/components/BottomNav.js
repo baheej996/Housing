@@ -52,8 +52,7 @@ export default function BottomNav() {
       padding: '0.4rem',
       display: 'flex',
       alignItems: 'center',
-      boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
-      position: 'relative'
+      boxShadow: '0 20px 40px rgba(0,0,0,0.6)'
     }}>
       {/* Liquid sliding bubble background */}
       <div style={{
