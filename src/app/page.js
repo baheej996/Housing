@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useGlobalData } from '@/components/DataProvider';
 import PlayerModal from '@/components/PlayerModal';
+import LiveFeed from '@/components/LiveFeed';
 
 export default function Home() {
   const { teams, members, results, programs, loading } = useGlobalData();
@@ -75,29 +76,7 @@ export default function Home() {
       </header>
 
       {/* Live Feed */}
-      {feedItems.length > 0 && (
-        <section className="glass-card" style={{ marginBottom: '2.5rem' }}>
-          <h2 style={{ marginBottom: '1.5rem' }}>🔔 Live <span className="gradient-text">Activity Feed</span></h2>
-          <div style={{ display: 'grid', gap: '0.8rem', maxHeight: '280px', overflowY: 'auto' }}>
-            {feedItems.map((item, i) => (
-              <div key={i} style={{
-                display: 'flex', alignItems: 'center', gap: '1rem',
-                background: 'rgba(255,255,255,0.03)',
-                borderRadius: '14px', padding: '0.9rem 1.2rem',
-                borderLeft: `3px solid ${item.pos === '1st' ? 'var(--gold)' : item.pos === '2nd' ? 'var(--silver)' : 'var(--bronze)'}`,
-                animation: `fadeIn 0.4s ease ${i * 0.07}s both`
-              }}>
-                <span style={{ fontSize: '0.9rem', flex: 1, lineHeight: '1.4' }}>{item.text}</span>
-                <span style={{
-                  background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))',
-                  borderRadius: '8px', padding: '0.2rem 0.6rem',
-                  fontSize: '0.8rem', fontWeight: '700', whiteSpace: 'nowrap'
-                }}>+{item.pts} pts</span>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      {feedItems.length > 0 && <LiveFeed items={feedItems} />}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
         {/* Team Standings */}
