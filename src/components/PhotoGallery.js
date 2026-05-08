@@ -6,10 +6,15 @@ function resolveImageUrl(url) {
   if (!url) return 'https://placehold.co/600x400/1a1a1a/ffffff?text=Image+Not+Found';
   
   const trimmed = url.trim();
+  const lower = trimmed.toLowerCase();
 
-  // 1. Handle Local Paths (e.g., "winner.jpg")
-  if (!trimmed.startsWith('http') && (trimmed.endsWith('.jpg') || trimmed.endsWith('.png') || trimmed.endsWith('.webp') || trimmed.endsWith('.jpeg'))) {
-    return `/images/${trimmed}`;
+  // 1. Handle Local Paths (e.g., "IMG_123.PNG" or "winner.jpg")
+  const extensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg'];
+  const isLocal = !trimmed.startsWith('http') && extensions.some(ext => lower.endsWith(ext));
+  
+  if (isLocal) {
+    // Ensure it starts with /images/ and use the ORIGINAL case for the filename
+    return trimmed.startsWith('/images/') ? trimmed : `/images/${trimmed}`;
   }
 
   // 2. Handle Google Drive Share Links
