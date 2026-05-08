@@ -43,9 +43,11 @@ export default function ResultEntry() {
     
     setSubmitting(true);
     const program = programs.find(p => p.Program_Name === selectedProgram);
-    const isGroup = program.Category === 'Group';
+    const category = program?.Category;
     
-    const prefix = isGroup ? 'Grp' : 'Ind';
+    let prefix = 'Ind';
+    if (category === 'Group') prefix = 'Grp';
+    if (category === 'Specials') prefix = 'Special';
     
     const resultEntries = [
       { pos: '1st', name: winners.pos1, pts: settings[`${prefix}_1st`] },

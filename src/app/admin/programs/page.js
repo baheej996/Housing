@@ -54,6 +54,7 @@ export default function ManagePrograms() {
               <select className="form-control" value={category} onChange={(e) => setCategory(e.target.value)}>
                 <option value="Individual">Individual</option>
                 <option value="Group">Group (Team Event)</option>
+                <option value="Specials">Specials</option>
               </select>
             </div>
             <button className="btn-primary" style={{ width: '100%' }}>Create Program</button>
