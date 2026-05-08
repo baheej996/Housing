@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 // Resolves various image URL types (Drive, Direct Links, Local Paths)
 function resolveImageUrl(url) {
