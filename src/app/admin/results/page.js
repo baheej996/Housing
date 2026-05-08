@@ -80,7 +80,8 @@ export default function ResultEntry() {
   if (loading) return <div style={{ padding: '2rem' }}>Loading data...</div>;
 
   const program = programs.find(p => p.Program_Name === selectedProgram);
-  const isTeamEvent = program?.Category === 'Group' || program?.Category === 'Specials';
+  const cat = program?.Category?.toLowerCase();
+  const isTeamEvent = cat === 'group' || cat === 'specials';
   const optionsList = isTeamEvent ? teams.map(t => t.Team_Name) : members.map(m => m.Member_Name);
 
   return (
@@ -107,7 +108,7 @@ export default function ResultEntry() {
           {selectedProgram && (
             <>
               <div className="form-group">
-                <label>🥇 1st Place ({program.Category === 'Group' ? 'Team' : 'Member'})</label>
+                <label>🥇 1st Place ({isTeamEvent ? 'Team' : 'Member'})</label>
                 <select className="form-control" value={winners.pos1} onChange={(e) => setWinners({...winners, pos1: e.target.value})}>
                   <option value="">-- Select Winner --</option>
                   {optionsList.map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
