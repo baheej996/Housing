@@ -83,7 +83,7 @@ export default function ManageSettings() {
         <div style={{ marginTop: '2rem', padding: '1rem', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '12px', fontSize: '0.9rem', color: 'var(--accent-primary)' }}>
           💡 Tip: Click outside the box after changing a number to save it automatically.
         </div>
-        <section className="glass-card">
+        <section className="glass-card" style={{ marginTop: '2rem' }}>
           <h2 style={{ marginBottom: '1.5rem' }}>Special Points</h2>
           <div className="admin-grid">
             {['Special_1st', 'Special_2nd', 'Special_3rd'].map(key => (
@@ -93,7 +93,7 @@ export default function ManageSettings() {
                   <input 
                     type="number" 
                     className="form-control" 
-                    defaultValue={settings[key] || ''}
+                    defaultValue={settings.find(s => s.Setting_Name === key)?.Value || ''}
                     onBlur={(e) => handleUpdate(key, e.target.value)}
                   />
                   {updating === key && <span style={{ fontSize: '0.8rem' }}>Updating...</span>}
@@ -102,3 +102,7 @@ export default function ManageSettings() {
             ))}
           </div>
         </section>
+      </div>
+    </main>
+  );
+}
