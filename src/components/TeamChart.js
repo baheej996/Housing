@@ -5,21 +5,24 @@ export default function TeamChart({ results, teams }) {
   const chartData = useMemo(() => {
     if (!results || results.length === 0 || !teams || teams.length === 0) return null;
 
-    // 1. Get unique dates/timestamps
+    // 1. Get unique dates/timestamps and add a "Start" point
     const uniqueTimestamps = [...new Set(results.map(r => r.Timestamp || 'TBD'))];
     
-    // Sort them: Try to sort as dates, if fail, sort as strings
     const sortedTimestamps = uniqueTimestamps.sort((a, b) => {
       const dateA = new Date(a);
       const dateB = new Date(b);
       if (!isNaN(dateA) && !isNaN(dateB)) return dateA - dateB;
       return a.toString().localeCompare(b.toString());
     });
+
+    // Add a "Start" point at the beginning
+    const finalTimestamps = ['Start', ...sortedTimestamps];
     
-    // 2. Calculate cumulative points for each team at each point
+    // 2. Calculate cumulative points
     const teamPaths = teams.map(team => {
       let cumulative = 0;
-      const points = sortedTimestamps.map(ts => {
+      const points = finalTimestamps.map((ts, idx) => {
+        if (idx === 0) return 0; // Everything starts at zero
         const dailyPoints = results
           .filter(r => (r.Timestamp || 'TBD') === ts && r.Team_ID === team.Team_Name)
           .reduce((sum, r) => sum + (parseInt(r.Points_Awarded) || 0), 0);
@@ -29,16 +32,16 @@ export default function TeamChart({ results, teams }) {
       return { name: team.Team_Name, points };
     });
 
-    return { dates: sortedTimestamps, teamPaths };
+    return { dates: finalTimestamps, teamPaths };
   }, [results, teams]);
 
   if (!chartData) return null;
 
   const { teamPaths, dates } = chartData;
-  const maxPoints = Math.max(...teamPaths.flatMap(t => t.points), 10);
+  const maxPoints = Math.max(...teamPaths.flatMap(t => t.points), 20);
   const width = 1000;
-  const height = 400;
-  const padding = 40;
+  const height = 500; // Increased height
+  const padding = 60; // More padding for labels
 
   // Helper to map data to SVG coordinates
   const getX = (index) => padding + (index * (width - padding * 2)) / (dates.length - 1 || 1);
@@ -105,10 +108,11 @@ export default function TeamChart({ results, teams }) {
 
         {/* X-Axis Labels */}
         {dates.map((date, i) => {
+          if (date === 'Start') return null; // Don't label the zero-point
           const d = new Date(date);
           const label = isNaN(d) ? date : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
           return (
-            <text key={i} x={getX(i)} y={height - 10} fill="rgba(255,255,255,0.3)" fontSize="10" textAnchor="middle">
+            <text key={i} x={getX(i)} y={height - 10} fill="rgba(255,255,255,0.3)" fontSize="12" textAnchor="middle">
               {label}
             </text>
           );
