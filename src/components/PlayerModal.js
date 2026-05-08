@@ -1,5 +1,6 @@
 'use client';
 import { useEffect } from 'react';
+import CountUp from './CountUp';
 
 export default function PlayerModal({ member, results, onClose }) {
   if (!member) return null;
@@ -73,7 +74,7 @@ export default function PlayerModal({ member, results, onClose }) {
           textAlign: 'center', marginBottom: '2rem'
         }}>
           <div style={{ fontSize: '2.5rem', fontWeight: '700' }} className="gradient-text">
-            {member.Individual_Points || member.points || 0}
+            <CountUp end={member.Individual_Points || member.points || 0} />
           </div>
           <div style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>Total Points Scored</div>
         </div>

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useGlobalData } from '@/components/DataProvider';
 import PlayerModal from '@/components/PlayerModal';
+import CountUp from '@/components/CountUp';
 
 export default function TeamsPage() {
   const { teams, members, results, loading } = useGlobalData();
@@ -38,7 +39,9 @@ export default function TeamsPage() {
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Total Squad Points</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--accent-primary)' }}>{team.Total_Points}</div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--accent-primary)' }}>
+                    <CountUp end={team.Total_Points} />
+                  </div>
                 </div>
               </div>
 
@@ -61,7 +64,9 @@ export default function TeamsPage() {
                     <div style={{ fontWeight: '600', marginBottom: '0.3rem', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.95rem' }}>
                       {m.Member_Name === team.Captain_Name && '👑 '}{m.Member_Name}
                     </div>
-                    <div style={{ fontSize: '0.85rem', color: 'var(--accent-secondary)' }}>{m.points || m.Individual_Points || 0} pts</div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--accent-secondary)' }}>
+                      <CountUp end={m.points || m.Individual_Points || 0} /> pts
+                    </div>
                     <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', marginTop: '0.3rem' }}>Tap to view profile →</div>
                   </div>
                 ))}

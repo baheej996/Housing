@@ -4,6 +4,7 @@ import { useGlobalData } from '@/components/DataProvider';
 import PlayerModal from '@/components/PlayerModal';
 import LiveFeed from '@/components/LiveFeed';
 import PhotoGallery from '@/components/PhotoGallery';
+import CountUp from '@/components/CountUp';
 
 export default function Home() {
   const { teams, members, results, programs, photos, loading } = useGlobalData();
@@ -122,7 +123,9 @@ export default function Home() {
                       <span style={{ fontSize: '1.4rem', fontWeight: '800', letterSpacing: '-0.02em' }}>{team.Team_Name}</span>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <span style={{ fontSize: '1.6rem', fontWeight: '900', color: i === 0 ? 'var(--gold)' : 'white' }}>{team.Total_Points}</span>
+                      <span style={{ fontSize: '1.6rem', fontWeight: '900', color: i === 0 ? 'var(--gold)' : 'white' }}>
+                        <CountUp end={team.Total_Points} />
+                      </span>
                       <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginLeft: '0.4rem', fontWeight: '600' }}>PTS</span>
                     </div>
                   </div>
@@ -200,7 +203,9 @@ export default function Home() {
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>({m.Team_ID})</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                  <span style={{ color: 'var(--accent-primary)', fontWeight: '600' }}>{m.Individual_Points} pts</span>
+                  <span style={{ color: 'var(--accent-primary)', fontWeight: '600' }}>
+                    <CountUp end={m.Individual_Points} /> pts
+                  </span>
                   <span style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>›</span>
                 </div>
               </div>
