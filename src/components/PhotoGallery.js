@@ -30,8 +30,31 @@ function resolveImageUrl(url) {
 export default function PhotoGallery({ photos }) {
   const [lightbox, setLightbox] = useState(null);
   const scrollRef = useRef(null);
+  const [isPaused, setIsPaused] = useState(false);
 
   if (!photos || photos.length === 0) return null;
+
+  // Show newest photos first (last row of sheet = first in gallery)
+  const sortedPhotos = [...photos].reverse();
+
+  // Auto-sliding logic
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!isPaused && scrollRef.current) {
+        const el = scrollRef.current;
+        const maxScroll = el.scrollWidth - el.clientWidth;
+        
+        if (el.scrollLeft >= maxScroll - 5) {
+          // Reset to start if at end
+          el.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          // Scroll by one card width
+          el.scrollBy({ left: 300, behavior: 'smooth' });
+        }
+      }
+    }, 4000); // Slide every 4 seconds
+    return () => clearInterval(interval);
+  }, [isPaused]);
 
   return (
     <>
@@ -73,8 +96,14 @@ export default function PhotoGallery({ photos }) {
         </div>
       )}
 
-      {/* Manual Scrollable Gallery */}
-      <div style={{ marginBottom: '4rem', position: 'relative' }}>
+      {/* Scrollable Gallery */}
+      <div 
+        style={{ marginBottom: '4rem', position: 'relative' }}
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={() => setIsPaused(true)}
+        onTouchEnd={() => setIsPaused(false)}
+      >
         <div 
           ref={scrollRef}
           style={{
@@ -83,13 +112,13 @@ export default function PhotoGallery({ photos }) {
             overflowX: 'auto',
             padding: '0.5rem 5% 1.5rem 5%',
             scrollSnapType: 'x proximity',
-            scrollbarWidth: 'none', // Hide scrollbar for Firefox
-            msOverflowStyle: 'none', // Hide scrollbar for IE/Edge
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
             cursor: 'grab'
           }}
           className="hide-scrollbar"
         >
-          {photos.map((photo, i) => (
+          {sortedPhotos.map((photo, i) => (
             <div
               key={i}
               onClick={() => setLightbox(photo)}
@@ -128,16 +157,14 @@ export default function PhotoGallery({ photos }) {
               )}
             </div>
           ))}
-          {/* Spacer for end-padding */}
           <div style={{ width: '5%', flexShrink: 0 }}></div>
         </div>
 
-        {/* Scroll Hint (Desktop only) */}
         <div style={{
           textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-dim)',
           marginTop: '-0.5rem', opacity: 0.6
         }}>
-          ← Swipe to browse photos →
+          ← Auto-sliding (Swipe to browse manually) →
         </div>
       </div>
 
