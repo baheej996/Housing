@@ -3,9 +3,10 @@ import { useState } from 'react';
 import { useGlobalData } from '@/components/DataProvider';
 import PlayerModal from '@/components/PlayerModal';
 import LiveFeed from '@/components/LiveFeed';
+import PhotoGallery from '@/components/PhotoGallery';
 
 export default function Home() {
-  const { teams, members, results, programs, loading } = useGlobalData();
+  const { teams, members, results, programs, photos, loading } = useGlobalData();
   const [selectedMember, setSelectedMember] = useState(null);
 
   if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading Grand Finale...</div>;
@@ -93,6 +94,8 @@ export default function Home() {
           <h1 style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>Housing <span className="gradient-text">Grand Finale</span></h1>
           <p style={{ color: 'var(--text-dim)', fontSize: '1.2rem' }}>Event Overview & Standings</p>
         </header>
+
+        <PhotoGallery photos={photos} />
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
         {/* Team Standings */}

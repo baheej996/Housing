@@ -209,6 +209,19 @@ nav {
   animation-play-state: paused;
 }
 
+/* Photo gallery strip */
+.photo-marquee {
+  display: flex;
+  gap: 1rem;
+  padding: 0.5rem 5%;
+  animation: scroll 40s linear infinite;
+  width: max-content;
+}
+
+.photo-marquee:hover {
+  animation-play-state: paused;
+}
+
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(40px) scale(0.95); }
   to   { opacity: 1; transform: translateY(0) scale(1); }

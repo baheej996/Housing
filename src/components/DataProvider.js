@@ -11,18 +11,20 @@ export function DataProvider({ children }) {
     results: [],
     programs: [],
     settings: {},
+    photos: [],
     loading: true,
   });
 
   useEffect(() => {
     const loadAllData = async () => {
       try {
-        const [teamData, memberData, resultData, programData, settingsData] = await Promise.all([
+        const [teamData, memberData, resultData, programData, settingsData, photoData] = await Promise.all([
           fetchData('Teams'),
           fetchData('Members'),
           fetchData('Results'),
           fetchData('Programs'),
-          fetchData('Settings')
+          fetchData('Settings'),
+          fetchData('Photos')
         ]);
         
         // --- Calculate totals ---
@@ -65,6 +67,7 @@ export function DataProvider({ children }) {
           results: resultData,
           programs: programData,
           settings: settingsObj,
+          photos: photoData || [],
           loading: false,
         });
       } catch (err) {
