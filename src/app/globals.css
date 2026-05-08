@@ -203,6 +203,7 @@ h1, h2, h3 {
   border-radius: 10px;
   color: white;
   outline: none;
+  font-size: 16px; /* Prevents iOS auto-zoom */
 }
 
 .form-control:focus {
