@@ -6,6 +6,8 @@ import LiveFeed from '@/components/LiveFeed';
 import PhotoGallery from '@/components/PhotoGallery';
 import CountUp from '@/components/CountUp';
 import TeamChart from '@/components/TeamChart';
+import { Reveal, Tilt, Floating } from '@/components/Animate';
+import { motion } from 'framer-motion';
 
 export default function Home() {
   const { teams, members, results, programs, photos, loading } = useGlobalData();
@@ -93,124 +95,149 @@ export default function Home() {
 
       <div style={{ padding: '2rem 5%' }}>
         <header style={{ textAlign: 'center', marginBottom: '5rem', marginTop: '2rem' }}>
-        <h1 style={{ fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', marginBottom: '1rem', lineHeight: 1.1 }}>Housing <span className="vibrant-gradient-text">Grand Finale</span></h1>
-        <p style={{ color: 'var(--text-dim)', fontSize: '1.2rem', fontWeight: '500' }}>The Battle for Ultimate Glory</p>
-      </header>
+          <Reveal>
+            <motion.h1 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              style={{ fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', marginBottom: '1rem', lineHeight: 1.1 }}
+            >
+              Housing <span className="vibrant-gradient-text">Grand Finale</span>
+            </motion.h1>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <p style={{ color: 'var(--text-dim)', fontSize: '1.2rem', fontWeight: '500' }}>The Battle for Ultimate Glory</p>
+          </Reveal>
+        </header>
 
-      <PhotoGallery photos={photos} />
+        <Reveal delay={0.4}>
+          <PhotoGallery photos={photos} />
+        </Reveal>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '2.5rem' }}>
-        {/* Team Standings - Infographic Redesign */}
-        <section className="glass-card" style={{ gridColumn: '1 / -1', padding: '3rem' }}>
-          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <h2 style={{ fontSize: '2.2rem', marginBottom: '0.5rem' }}>🏆 Championship <span className="vibrant-gradient-text">Race</span></h2>
-            <p style={{ color: 'var(--text-dim)', fontSize: '1rem' }}>Cumulative point progression over the tournament</p>
-          </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '2.5rem' }}>
+          {/* Team Standings - Infographic Redesign */}
+          <section style={{ gridColumn: '1 / -1' }}>
+            <Reveal>
+              <div className="glass-card" style={{ padding: '3rem' }}>
+                <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                  <h2 style={{ fontSize: '2.2rem', marginBottom: '0.5rem' }}>🏆 Championship <span className="vibrant-gradient-text">Race</span></h2>
+                  <p style={{ color: 'var(--text-dim)', fontSize: '1rem' }}>Cumulative point progression over the tournament</p>
+                </div>
 
-          <TeamChart results={results} teams={teams} />
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.2rem', marginTop: '3rem' }}>
-            {teams.map((team, i) => {
-              const maxPoints = teams[0]?.Total_Points || 1;
-              const percentage = Math.max(10, (team.Total_Points / maxPoints) * 100);
-              const colors = ['#6366f1', '#ec4899', '#f59e0b', '#10b981'];
-              const teamColor = colors[i % colors.length];
-              
-              return (
-                <div key={i} className="leaderboard-item" style={{ 
-                  background: 'rgba(255,255,255,0.01)', 
-                  border: `1px solid rgba(255,255,255,0.05)`,
-                  borderLeft: `4px solid ${teamColor}`,
-                  padding: '1.2rem 1.5rem'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                    <div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.2rem' }}>
-                        RANK #{i+1}
+                <TeamChart results={results} teams={teams} />
+                
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.2rem', marginTop: '3rem' }}>
+                  {teams.map((team, i) => {
+                    const colors = ['#6366f1', '#ec4899', '#f59e0b', '#10b981'];
+                    const teamColor = colors[i % colors.length];
+                    
+                    return (
+                      <Reveal key={i} delay={0.1 * i}>
+                        <Tilt>
+                          <div className="leaderboard-item" style={{ 
+                            background: 'rgba(255,255,255,0.01)', 
+                            border: `1px solid rgba(255,255,255,0.05)`,
+                            borderLeft: `4px solid ${teamColor}`,
+                            padding: '1.2rem 1.5rem'
+                          }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                              <div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.2rem' }}>
+                                  RANK #{i+1}
+                                </div>
+                                <span style={{ fontSize: '1.1rem', fontWeight: '800' }}>{team.Team_Name}</span>
+                              </div>
+                              <div style={{ textAlign: 'right' }}>
+                                <span style={{ fontSize: '1.4rem', fontWeight: '900', color: teamColor }}>
+                                  <CountUp end={team.Total_Points} />
+                                </span>
+                                <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)', marginLeft: '0.3rem', fontWeight: '700' }}>PTS</span>
+                              </div>
+                            </div>
+                          </div>
+                        </Tilt>
+                      </Reveal>
+                    );
+                  })}
+                </div>
+              </div>
+            </Reveal>
+          </section>
+
+          {/* Latest Results - Vibrant Refresh */}
+          <section>
+            <Reveal>
+              <div className="glass-card">
+                <h2 style={{ marginBottom: '2rem', fontSize: '1.5rem' }}>🎉 Latest <span className="vibrant-gradient-text">Results</span></h2>
+                <div style={{ display: 'grid', gap: '1.2rem' }}>
+                  {recentResults.slice(0, 5).map(([name, winners], i) => (
+                    <Reveal key={i} delay={0.1 * i} y={20}>
+                      <div style={{ 
+                        background: 'rgba(255,255,255,0.02)', 
+                        padding: '1.2rem', 
+                        borderRadius: '18px',
+                        border: '1px solid rgba(255,255,255,0.04)',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                      }}>
+                        <div>
+                          <h3 style={{ fontSize: '0.95rem', marginBottom: '0.4rem', fontWeight: '700' }}>{name}</h3>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                            <span style={{ fontSize: '1.1rem' }}>🥇</span>
+                            <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--accent-secondary)' }}>
+                              {winners.find(w => w.Position === '1st')?.Winner_ID || 'TBD'}
+                            </span>
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right', opacity: 0.5 }}>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                        </div>
                       </div>
-                      <span style={{ fontSize: '1.1rem', fontWeight: '800' }}>{team.Team_Name}</span>
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <span style={{ fontSize: '1.4rem', fontWeight: '900', color: teamColor }}>
-                        <CountUp end={team.Total_Points} />
-                      </span>
-                      <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)', marginLeft: '0.3rem', fontWeight: '700' }}>PTS</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Latest Results - Vibrant Refresh */}
-        <section className="glass-card">
-          <h2 style={{ marginBottom: '2rem', fontSize: '1.5rem' }}>🎉 Latest <span className="vibrant-gradient-text">Results</span></h2>
-          <div style={{ display: 'grid', gap: '1.2rem' }}>
-            {recentResults.slice(0, 5).map(([name, winners], i) => (
-              <div key={i} style={{ 
-                background: 'rgba(255,255,255,0.02)', 
-                padding: '1.2rem', 
-                borderRadius: '18px',
-                border: '1px solid rgba(255,255,255,0.04)',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}>
-                <div>
-                  <h3 style={{ fontSize: '0.95rem', marginBottom: '0.4rem', fontWeight: '700' }}>{name}</h3>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                    <span style={{ fontSize: '1.1rem' }}>🥇</span>
-                    <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--accent-secondary)' }}>
-                      {winners.find(w => w.Position === '1st')?.Winner_ID || 'TBD'}
-                    </span>
-                  </div>
-                </div>
-                <div style={{ textAlign: 'right', opacity: 0.5 }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </Reveal>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
+            </Reveal>
+          </section>
 
-        {/* Top Performers — clickable */}
-        <section className="glass-card">
-          <h2 style={{ marginBottom: '2rem' }}>⭐ Top <span className="gradient-text">Performers</span></h2>
-          <div style={{ display: 'grid', gap: '0.8rem' }}>
-            {members.slice(0, 5).map((m, i) => (
-              <div
-                key={i}
-                onClick={() => setSelectedMember(m)}
-                style={{
-                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  padding: '0.7rem 1rem',
-                  borderRadius: '14px',
-                  background: 'rgba(255,255,255,0.03)',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  border: '1px solid transparent',
-                }}
-                onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(99,102,241,0.1)'; e.currentTarget.style.borderColor = 'rgba(99,102,241,0.3)'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor = 'transparent'; }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                  <span style={{ color: 'var(--text-dim)', width: '20px', textAlign: 'center' }}>{i + 1}.</span>
-                  <span style={{ fontWeight: '500' }}>{m.Member_Name}</span>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>({m.Team_ID})</span>
+          {/* Top Performers */}
+          <section>
+            <Reveal delay={0.2}>
+              <div className="glass-card">
+                <h2 style={{ marginBottom: '2rem', fontSize: '1.5rem' }}>🔥 Top <span className="vibrant-gradient-text">Performers</span></h2>
+                <div style={{ display: 'grid', gap: '1rem' }}>
+                  {members.sort((a, b) => (b.Individual_Points || 0) - (a.Individual_Points || 0)).slice(0, 5).map((m, i) => (
+                    <Reveal key={i} delay={0.1 * i} y={20}>
+                      <div 
+                        onClick={() => setSelectedMember(m)}
+                        style={{ 
+                          display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
+                          padding: '0.8rem 1rem', borderRadius: '14px', background: 'rgba(255,255,255,0.02)', 
+                          cursor: 'pointer', border: '1px solid transparent', transition: 'all 0.3s'
+                        }}
+                        onMouseOver={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
+                        onMouseOut={e => e.currentTarget.style.borderColor = 'transparent'}
+                      >
+                        <div>
+                          <div style={{ fontWeight: '700', fontSize: '0.9rem' }}>{m.Member_Name}</div>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>({m.Team_ID})</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                          <span style={{ color: 'var(--accent-primary)', fontWeight: '600' }}>
+                            <CountUp end={m.Individual_Points} /> pts
+                          </span>
+                          <span style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>›</span>
+                        </div>
+                      </div>
+                    </Reveal>
+                  ))}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                  <span style={{ color: 'var(--accent-primary)', fontWeight: '600' }}>
-                    <CountUp end={m.Individual_Points} /> pts
-                  </span>
-                  <span style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>›</span>
-                </div>
+                <p style={{ marginTop: '1rem', fontSize: '0.78rem', color: 'var(--text-dim)', textAlign: 'center' }}>Tap a name to view Trophy Cabinet</p>
               </div>
-            ))}
-          </div>
-          <p style={{ marginTop: '1rem', fontSize: '0.78rem', color: 'var(--text-dim)', textAlign: 'center' }}>Tap a name to view Trophy Cabinet</p>
-        </section>
-      </div>
+            </Reveal>
+          </section>
+        </div>
       </div>
     </main>
   );
