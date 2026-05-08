@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { Reveal, Tilt } from '@/components/Animate';
 
 export default function AdminDashboard() {
   const tools = [
@@ -16,43 +17,49 @@ export default function AdminDashboard() {
   };
 
   return (
-    <main style={{ padding: '2rem 5%' }}>
+    <main style={{ padding: '2rem 5% 8rem 5%' }}>
       <header style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
-          <Link href="/" style={{ color: 'var(--text-dim)', textDecoration: 'none', fontSize: '0.9rem' }}>← Back to Public Site</Link>
-          <h1 style={{ fontSize: '2.5rem', marginTop: '1rem' }}>Admin <span className="gradient-text">Control Center</span></h1>
-          <p style={{ color: 'var(--text-dim)' }}>Manage every aspect of the Housing Program</p>
+          <Reveal>
+            <Link href="/" style={{ color: 'var(--text-dim)', textDecoration: 'none', fontSize: '0.9rem' }}>← Back to Public Site</Link>
+            <h1 style={{ fontSize: '2.5rem', marginTop: '1rem' }}>Admin <span className="vibrant-gradient-text">Control Center</span></h1>
+            <p style={{ color: 'var(--text-dim)' }}>Manage every aspect of the Housing Program</p>
+          </Reveal>
         </div>
-        <button 
-          onClick={handleLogout}
-          style={{
-            background: 'rgba(239, 68, 68, 0.1)',
-            color: '#ef4444',
-            border: '1px solid rgba(239, 68, 68, 0.2)',
-            padding: '0.6rem 1.2rem',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            fontWeight: '600',
-            transition: 'all 0.2s ease'
-          }}
-          onMouseOver={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'}
-          onMouseOut={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'}
-        >
-          Sign Out
-        </button>
+        <Reveal delay={0.2}>
+          <button 
+            onClick={handleLogout}
+            style={{
+              background: 'rgba(239, 68, 68, 0.1)',
+              color: '#ef4444',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
+              padding: '0.6rem 1.2rem',
+              borderRadius: '12px',
+              cursor: 'pointer',
+              fontWeight: '600',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            Sign Out
+          </button>
+        </Reveal>
       </header>
 
       <div className="admin-grid">
         {tools.map((tool, index) => (
-          <Link key={index} href={tool.href} style={{ textDecoration: 'none' }}>
-            <div className="glass-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <span style={{ fontSize: '2rem' }}>{tool.icon}</span>
-              <div>
-                <h3 style={{ color: 'white', marginBottom: '0.5rem' }}>{tool.name}</h3>
-                <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>{tool.desc}</p>
-              </div>
-            </div>
-          </Link>
+          <Reveal key={index} delay={index * 0.1}>
+            <Tilt>
+              <Link href={tool.href} style={{ textDecoration: 'none' }}>
+                <div className="glass-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <span style={{ fontSize: '2rem' }}>{tool.icon}</span>
+                  <div>
+                    <h3 style={{ color: 'white', marginBottom: '0.5rem' }}>{tool.name}</h3>
+                    <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>{tool.desc}</p>
+                  </div>
+                </div>
+              </Link>
+            </Tilt>
+          </Reveal>
         ))}
       </div>
     </main>
