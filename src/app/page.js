@@ -38,7 +38,7 @@ export default function Home() {
   });
 
   return (
-    <main style={{ padding: '2rem 5% 8rem 5%' }}>
+    <main style={{ paddingBottom: '8rem' }}>
       {selectedMember && (
         <PlayerModal
           member={selectedMember}
@@ -46,6 +46,11 @@ export default function Home() {
           onClose={() => setSelectedMember(null)}
         />
       )}
+
+      {/* Top ticker bar */}
+      {feedItems.length > 0 && <LiveFeed items={feedItems} />}
+
+      <div style={{ padding: '2rem 5%' }}>
 
       {/* Upcoming Marquee */}
       {upcoming.length > 0 && (
@@ -75,8 +80,6 @@ export default function Home() {
         <p style={{ color: 'var(--text-dim)', fontSize: '1.2rem' }}>Event Overview & Standings</p>
       </header>
 
-      {/* Live Feed */}
-      {feedItems.length > 0 && <LiveFeed items={feedItems} />}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
         {/* Team Standings */}
@@ -146,6 +149,7 @@ export default function Home() {
           </div>
           <p style={{ marginTop: '1rem', fontSize: '0.78rem', color: 'var(--text-dim)', textAlign: 'center' }}>Tap a name to view Trophy Cabinet</p>
         </section>
+      </div>
       </div>
     </main>
   );
