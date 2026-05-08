@@ -43,7 +43,7 @@ export default function LiveFeed({ items }) {
       display: 'flex',
       alignItems: 'center',
       gap: '1rem',
-      minHeight: '44px'
+      minHeight: '60px'
     }}>
       <div style={{
         display: 'flex',
@@ -59,9 +59,8 @@ export default function LiveFeed({ items }) {
         <span style={{
           fontSize: '0.88rem',
           color: 'rgba(255,255,255,0.85)',
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis'
+          lineHeight: '1.5',
+          flex: 1
         }}>{item.text}</span>
         <span style={{
           background: `linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))`,
@@ -72,20 +71,6 @@ export default function LiveFeed({ items }) {
           flexShrink: 0,
           whiteSpace: 'nowrap'
         }}>+{item.pts} pts</span>
-      </div>
-
-      {/* Dot indicators only */}
-      <div style={{ display: 'flex', gap: '3px', flexShrink: 0 }}>
-        {items.map((_, i) => (
-          <div key={i} style={{
-            width: i === current ? '14px' : '4px',
-            height: '4px',
-            borderRadius: '2px',
-            background: i === current ? borderColor : 'rgba(255,255,255,0.2)',
-            transition: 'all 0.4s ease',
-          }} />
-        ))}
-      </div>
     </div>
   );
 }
