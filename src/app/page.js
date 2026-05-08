@@ -1,8 +1,11 @@
 'use client';
+import { useState } from 'react';
 import { useGlobalData } from '@/components/DataProvider';
+import PlayerModal from '@/components/PlayerModal';
 
 export default function Home() {
   const { teams, members, results, programs, loading } = useGlobalData();
+  const [selectedMember, setSelectedMember] = useState(null);
 
   if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading Grand Finale...</div>;
 
@@ -17,8 +20,33 @@ export default function Home() {
   const recentResults = Object.entries(groupedResults).reverse();
   const upcoming = programs.filter(p => !completedProgramIds.has(p.Program_Name));
 
+  // Live Feed: Build commentary from latest results (up to 15)
+  const feedItems = [];
+  recentResults.slice(0, 5).forEach(([programName, winners]) => {
+    winners.sort((a, b) => (a.Position || '').localeCompare(b.Position || '')).forEach(w => {
+      const member = members.find(m => m.Member_Name === w.Winner_ID);
+      const teamName = member ? member.Team_ID : w.Winner_ID;
+      const medal = w.Position === '1st' ? '🥇' : w.Position === '2nd' ? '🥈' : '🥉';
+      const verb = w.Position === '1st' ? 'dominated' : w.Position === '2nd' ? 'clinched' : 'earned';
+      feedItems.push({
+        text: `${medal} ${w.Winner_ID} ${verb} ${w.Position} place in ${programName} scoring +${w.Points_Awarded} pts for ${teamName}!`,
+        pts: w.Points_Awarded,
+        pos: w.Position
+      });
+    });
+  });
+
   return (
     <main style={{ padding: '2rem 5% 8rem 5%' }}>
+      {selectedMember && (
+        <PlayerModal
+          member={selectedMember}
+          results={results}
+          onClose={() => setSelectedMember(null)}
+        />
+      )}
+
+      {/* Upcoming Marquee */}
       {upcoming.length > 0 && (
         <div style={{ 
           background: 'rgba(255,255,255,0.03)',
@@ -46,19 +74,51 @@ export default function Home() {
         <p style={{ color: 'var(--text-dim)', fontSize: '1.2rem' }}>Event Overview & Standings</p>
       </header>
 
+      {/* Live Feed */}
+      {feedItems.length > 0 && (
+        <section className="glass-card" style={{ marginBottom: '2.5rem' }}>
+          <h2 style={{ marginBottom: '1.5rem' }}>🔔 Live <span className="gradient-text">Activity Feed</span></h2>
+          <div style={{ display: 'grid', gap: '0.8rem', maxHeight: '280px', overflowY: 'auto' }}>
+            {feedItems.map((item, i) => (
+              <div key={i} style={{
+                display: 'flex', alignItems: 'center', gap: '1rem',
+                background: 'rgba(255,255,255,0.03)',
+                borderRadius: '14px', padding: '0.9rem 1.2rem',
+                borderLeft: `3px solid ${item.pos === '1st' ? 'var(--gold)' : item.pos === '2nd' ? 'var(--silver)' : 'var(--bronze)'}`,
+                animation: `fadeIn 0.4s ease ${i * 0.07}s both`
+              }}>
+                <span style={{ fontSize: '0.9rem', flex: 1, lineHeight: '1.4' }}>{item.text}</span>
+                <span style={{
+                  background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))',
+                  borderRadius: '8px', padding: '0.2rem 0.6rem',
+                  fontSize: '0.8rem', fontWeight: '700', whiteSpace: 'nowrap'
+                }}>+{item.pts} pts</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+        {/* Team Standings */}
         <section className="glass-card">
           <h2 style={{ marginBottom: '2rem' }}>🛡️ Team <span className="gradient-text">Standings</span></h2>
           <div style={{ display: 'grid', gap: '1rem' }}>
             {teams.map((team, i) => (
               <div key={i} className="leaderboard-item">
-                <span>{i + 1}. {team.Team_Name}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <div className={`rank-badge ${i < 3 ? `rank-${i+1}` : ''}`} style={i >= 3 ? { background: 'rgba(255,255,255,0.08)', color: 'var(--text-dim)' } : {}}>
+                    {i + 1}
+                  </div>
+                  <span style={{ fontWeight: '600' }}>{team.Team_Name}</span>
+                </div>
                 <span style={{ fontWeight: 'bold', color: 'var(--accent-primary)' }}>{team.Total_Points} pts</span>
               </div>
             ))}
           </div>
         </section>
 
+        {/* Latest Results */}
         <section className="glass-card">
           <h2 style={{ marginBottom: '2rem' }}>🎉 Latest <span className="gradient-text">Results</span></h2>
           <div style={{ display: 'grid', gap: '1.5rem' }}>
@@ -73,16 +133,39 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Top Performers — clickable */}
         <section className="glass-card">
           <h2 style={{ marginBottom: '2rem' }}>⭐ Top <span className="gradient-text">Performers</span></h2>
-          <div style={{ display: 'grid', gap: '1rem' }}>
+          <div style={{ display: 'grid', gap: '0.8rem' }}>
             {members.slice(0, 5).map((m, i) => (
-              <div key={i} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>{i + 1}. {m.Member_Name}</span>
-                <span style={{ color: 'var(--accent-primary)' }}>{m.Individual_Points} pts</span>
+              <div
+                key={i}
+                onClick={() => setSelectedMember(m)}
+                style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '0.7rem 1rem',
+                  borderRadius: '14px',
+                  background: 'rgba(255,255,255,0.03)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  border: '1px solid transparent',
+                }}
+                onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(99,102,241,0.1)'; e.currentTarget.style.borderColor = 'rgba(99,102,241,0.3)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor = 'transparent'; }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                  <span style={{ color: 'var(--text-dim)', width: '20px', textAlign: 'center' }}>{i + 1}.</span>
+                  <span style={{ fontWeight: '500' }}>{m.Member_Name}</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>({m.Team_ID})</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <span style={{ color: 'var(--accent-primary)', fontWeight: '600' }}>{m.Individual_Points} pts</span>
+                  <span style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>›</span>
+                </div>
               </div>
             ))}
           </div>
+          <p style={{ marginTop: '1rem', fontSize: '0.78rem', color: 'var(--text-dim)', textAlign: 'center' }}>Tap a name to view Trophy Cabinet</p>
         </section>
       </div>
     </main>
