@@ -71,6 +71,7 @@ export default function LiveFeed({ items }) {
           flexShrink: 0,
           whiteSpace: 'nowrap'
         }}>+{item.pts} pts</span>
+      </div>
     </div>
   );
 }
