@@ -4,21 +4,14 @@ import { useGlobalData } from '@/components/DataProvider';
 import { Reveal, Tilt } from '@/components/Animate';
 
 export default function ResultsPage() {
-  const { results, members, teams, loading } = useGlobalData();
+  const { resultsByProgram = {}, members, teams, loading } = useGlobalData();
   const [search, setSearch] = useState('');
 
-  if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading Results...</div>;
-
-  // Group by program
-  const grouped = {};
-  results.forEach(r => {
-    if (!grouped[r.Program_ID]) grouped[r.Program_ID] = [];
-    grouped[r.Program_ID].push(r);
-  });
+  if (loading && Object.keys(resultsByProgram).length === 0) return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading Results...</div>;
 
   // Filter: match program name OR winner name
   const query = search.toLowerCase();
-  const filteredGroups = Object.entries(grouped).reverse().filter(([programName, winners]) => {
+  const filteredGroups = Object.entries(resultsByProgram).reverse().filter(([programName, winners]) => {
     if (!query) return true;
     if (programName.toLowerCase().includes(query)) return true;
     return winners.some(w => w.Winner_ID?.toLowerCase().includes(query));

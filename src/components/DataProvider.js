@@ -61,10 +61,18 @@ export function DataProvider({ children }) {
       const settingsObj = {};
       settingsData.forEach(item => settingsObj[item.Setting_Name] = item.Value);
 
+      // Pre-group results by program for instant Results Tab rendering
+      const resultsByProgram = {};
+      resultData.forEach(r => {
+        if (!resultsByProgram[r.Program_ID]) resultsByProgram[r.Program_ID] = [];
+        resultsByProgram[r.Program_ID].push(r);
+      });
+
       setData({
         teams: calculatedTeams,
         members: calculatedMembers,
         results: resultData,
+        resultsByProgram, // New pre-calculated field
         programs: programData,
         settings: settingsObj,
         photos: photoData || [],
