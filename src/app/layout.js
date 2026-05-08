@@ -1,4 +1,5 @@
 import "./globals.css";
+import BottomNav from "@/components/BottomNav";
 
 export const metadata = {
   title: "Housing Program Leaderboard",
@@ -8,7 +9,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <BottomNav />
+      </body>
     </html>
   );
 }
