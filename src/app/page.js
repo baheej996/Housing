@@ -58,18 +58,27 @@ export default function Home() {
           overflow: 'hidden',
           borderBottom: '1px solid rgba(255,255,255,0.06)',
           background: 'rgba(10,10,15,0.6)',
-          padding: '0.5rem 5%',
-          gap: '1.5rem'
+          padding: '0.5rem 0',
+          gap: '0',
+          position: 'relative'
         }}>
-          <span style={{
-            fontWeight: '700',
-            fontSize: '0.78rem',
-            letterSpacing: '0.12em',
-            color: 'var(--accent-primary)',
-            flexShrink: 0,
-            textTransform: 'uppercase'
-          }}>Upcoming</span>
-          <div className="marquee">
+          {/* Label with gradient fade — "swallows" the scrolling text */}
+          <div style={{
+            position: 'relative',
+            zIndex: 2,
+            padding: '0.5rem 1.5rem 0.5rem 5%',
+            background: 'linear-gradient(90deg, rgba(10,10,15,1) 70%, transparent)',
+            flexShrink: 0
+          }}>
+            <span style={{
+              fontWeight: '700',
+              fontSize: '0.78rem',
+              letterSpacing: '0.12em',
+              color: 'var(--accent-primary)',
+              textTransform: 'uppercase'
+            }}>Upcoming</span>
+          </div>
+          <div className="marquee" style={{ zIndex: 1 }}>
             {[...upcoming, ...upcoming].map((p, i) => (
               <span key={i} style={{ whiteSpace: 'nowrap', fontWeight: '500', fontSize: '0.88rem', color: 'rgba(255,255,255,0.75)' }}>
                 ⚡ {p.Program_Name} <span style={{ color: 'var(--text-dim)', fontSize: '0.78rem' }}>({p.Category})</span>
