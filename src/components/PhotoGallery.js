@@ -1,15 +1,25 @@
 'use client';
 import { useState } from 'react';
 
-// Converts any Google Drive share link to a direct image URL
-function driveUrl(url) {
-  if (!url) return '';
-  // Already a direct link
-  if (url.includes('uc?export=view') || url.includes('uc?id=')) return url;
-  // Extract file ID from sharing link: /file/d/FILE_ID/view
-  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-  if (match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-  return url;
+// Resolves various image URL types (Drive, Direct Links, Local Paths)
+function resolveImageUrl(url) {
+  if (!url) return 'https://placehold.co/600x400/1a1a1a/ffffff?text=Image+Not+Found';
+  
+  const trimmed = url.trim();
+
+  // 1. Handle Local Paths (if user just puts "photo.jpg")
+  if (!trimmed.startsWith('http') && (trimmed.endsWith('.jpg') || trimmed.endsWith('.png') || trimmed.endsWith('.webp') || trimmed.endsWith('.jpeg'))) {
+    return `/images/${trimmed}`;
+  }
+
+  // 2. Handle Google Drive Share Links
+  if (trimmed.includes('drive.google.com')) {
+    const match = trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+  }
+
+  // 3. Direct Links (Imgur, Postimages, etc.) - return as is
+  return trimmed;
 }
 
 export default function PhotoGallery({ photos }) {
@@ -36,8 +46,9 @@ export default function PhotoGallery({ photos }) {
             animation: 'fadeIn 0.2s ease'
           }}>
           <img
-            src={driveUrl(lightbox.Image_URL)}
+            src={resolveImageUrl(lightbox.Image_URL)}
             alt={lightbox.Caption || ''}
+            onError={(e) => { e.target.src = 'https://placehold.co/600x400/1a1a1a/ffffff?text=Image+Load+Error'; }}
             style={{
               maxWidth: '90vw', maxHeight: '75vh',
               borderRadius: '20px',
@@ -95,8 +106,9 @@ export default function PhotoGallery({ photos }) {
               onMouseOut={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = 'none'; }}
             >
               <img
-                src={driveUrl(photo.Image_URL)}
+                src={resolveImageUrl(photo.Image_URL)}
                 alt={photo.Caption || `Photo ${i + 1}`}
+                onError={(e) => { e.target.src = 'https://placehold.co/600x400/1a1a1a/ffffff?text=Link+Broken'; }}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               />
               {photo.Caption && (
