@@ -1,45 +1,22 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { fetchData, postData } from '@/lib/api';
+import { useState } from 'react';
+import { postData } from '@/lib/api';
+import { useGlobalData } from '@/components/DataProvider';
+import { Reveal, Tilt } from '@/components/Animate';
 import Link from 'next/link';
 
 export default function ResultEntry() {
-  const [programs, setPrograms] = useState([]);
-  const [members, setMembers] = useState([]);
-  const [teams, setTeams] = useState([]);
-  const [settings, setSettings] = useState({});
+  const { programs, members, teams, settings, refreshData, loading: globalLoading } = useGlobalData();
   const [selectedProgram, setSelectedProgram] = useState('');
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   const [winners, setWinners] = useState({
     pos1: '', pos2: '', pos3: ''
   });
 
-  useEffect(() => {
-    const loadData = async () => {
-      const p = await fetchData('Programs');
-      const m = await fetchData('Members');
-      const t = await fetchData('Teams');
-      const s = await fetchData('Settings');
-      
-      setPrograms(p);
-      setMembers(m);
-      setTeams(t);
-      
-      // Convert settings array to object
-      const sObj = {};
-      s.forEach(item => sObj[item.Setting_Name] = item.Value);
-      setSettings(sObj);
-      
-      setLoading(false);
-    };
-    loadData();
-  }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedProgram || !winners.pos1) return alert('Please select program and 1st place');
+    if (!selectedProgram || !winners.pos1 || submitting) return alert('Please select program and 1st place');
     
     setSubmitting(true);
     const program = programs.find(p => p.Program_Name === selectedProgram);
@@ -67,6 +44,7 @@ export default function ResultEntry() {
           ]);
         }
       }
+      refreshData(); // Instant background update
       alert('Results published successfully!');
       setWinners({ pos1: '', pos2: '', pos3: '' });
       setSelectedProgram('');
@@ -77,7 +55,7 @@ export default function ResultEntry() {
     }
   };
 
-  if (loading) return <div style={{ padding: '2rem' }}>Loading data...</div>;
+  if (globalLoading && programs.length === 0) return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading Admin Panel...</div>;
 
   const program = programs.find(p => p.Program_Name === selectedProgram);
   const cat = program?.Category?.toLowerCase();
@@ -85,59 +63,70 @@ export default function ResultEntry() {
   const optionsList = isTeamEvent ? teams.map(t => t.Team_Name) : members.map(m => m.Member_Name);
 
   return (
-    <main style={{ padding: '2rem 5%' }}>
+    <main style={{ padding: '2rem 5% 8rem 5%' }}>
       <header style={{ marginBottom: '3rem' }}>
-        <Link href="/admin" style={{ color: 'var(--text-dim)', textDecoration: 'none' }}>← Back to Admin</Link>
-        <h1 style={{ fontSize: '2.5rem', marginTop: '1rem' }}>Result <span className="gradient-text">Entry</span></h1>
+        <Reveal>
+          <Link href="/admin" style={{ color: 'var(--text-dim)', textDecoration: 'none' }}>← Back to Admin</Link>
+          <h1 style={{ fontSize: '2.5rem', marginTop: '1rem' }}>Result <span className="vibrant-gradient-text">Entry</span></h1>
+        </Reveal>
       </header>
 
-      <div className="glass-card" style={{ maxWidth: '600px', margin: '0 auto' }}>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Select Program</label>
-            <select 
-              className="form-control" 
-              value={selectedProgram} 
-              onChange={(e) => setSelectedProgram(e.target.value)}
-            >
-              <option value="">-- Choose Program --</option>
-              {programs.map((p, i) => <option key={i} value={p.Program_Name}>{p.Program_Name} ({p.Category})</option>)}
-            </select>
-          </div>
+      <Reveal delay={0.1}>
+        <div className="glass-card" style={{ maxWidth: '600px', margin: '0 auto' }}>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Select Program</label>
+              <select 
+                className="form-control" 
+                value={selectedProgram} 
+                onChange={(e) => setSelectedProgram(e.target.value)}
+                disabled={submitting}
+              >
+                <option value="">-- Choose Program --</option>
+                {programs.map((p, i) => <option key={i} value={p.Program_Name}>{p.Program_Name} ({p.Category})</option>)}
+              </select>
+            </div>
 
-          {selectedProgram && (
-            <>
-              <div className="form-group">
-                <label>🥇 1st Place ({isTeamEvent ? 'Team' : 'Member'})</label>
-                <select className="form-control" value={winners.pos1} onChange={(e) => setWinners({...winners, pos1: e.target.value})}>
-                  <option value="">-- Select Winner --</option>
-                  {optionsList.map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
-                </select>
-              </div>
+            {selectedProgram && (
+              <>
+                <Reveal delay={0.1} y={10}>
+                  <div className="form-group">
+                    <label>🥇 1st Place ({isTeamEvent ? 'Team' : 'Member'})</label>
+                    <select className="form-control" value={winners.pos1} onChange={(e) => setWinners({...winners, pos1: e.target.value})} disabled={submitting}>
+                      <option value="">-- Select Winner --</option>
+                      {optionsList.map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
+                    </select>
+                  </div>
+                </Reveal>
 
-              <div className="form-group">
-                <label>🥈 2nd Place</label>
-                <select className="form-control" value={winners.pos2} onChange={(e) => setWinners({...winners, pos2: e.target.value})}>
-                  <option value="">-- Select Winner --</option>
-                  {optionsList.map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
-                </select>
-              </div>
+                <Reveal delay={0.2} y={10}>
+                  <div className="form-group">
+                    <label>🥈 2nd Place</label>
+                    <select className="form-control" value={winners.pos2} onChange={(e) => setWinners({...winners, pos2: e.target.value})} disabled={submitting}>
+                      <option value="">-- Select Winner --</option>
+                      {optionsList.map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
+                    </select>
+                  </div>
+                </Reveal>
 
-              <div className="form-group">
-                <label>🥉 3rd Place</label>
-                <select className="form-control" value={winners.pos3} onChange={(e) => setWinners({...winners, pos3: e.target.value})}>
-                  <option value="">-- Select Winner --</option>
-                  {optionsList.map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
-                </select>
-              </div>
+                <Reveal delay={0.3} y={10}>
+                  <div className="form-group">
+                    <label>🥉 3rd Place</label>
+                    <select className="form-control" value={winners.pos3} onChange={(e) => setWinners({...winners, pos3: e.target.value})} disabled={submitting}>
+                      <option value="">-- Select Winner --</option>
+                      {optionsList.map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
+                    </select>
+                  </div>
+                </Reveal>
 
-              <button className="btn-primary" style={{ width: '100%', marginTop: '1rem' }} disabled={submitting}>
-                {submitting ? 'Publishing...' : 'Publish Results'}
-              </button>
-            </>
-          )}
-        </form>
-      </div>
+                <button className="btn-primary" style={{ width: '100%', marginTop: '1rem', opacity: submitting ? 0.7 : 1 }} disabled={submitting}>
+                  {submitting ? 'Publishing...' : 'Publish Results'}
+                </button>
+              </>
+            )}
+          </form>
+        </div>
+      </Reveal>
     </main>
   );
 }
