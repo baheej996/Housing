@@ -82,7 +82,9 @@ export default function BottomNav() {
             transition: 'all 0.3s ease',
             gap: '4px',
             zIndex: 1,
-            position: 'relative'
+            position: 'relative',
+            WebkitTapHighlightColor: 'transparent',
+            outline: 'none'
           }}>
             <div style={{ transform: isActive ? 'scale(1.1)' : 'scale(1)', transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
               {tab.icon}
