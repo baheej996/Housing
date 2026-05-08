@@ -16,17 +16,30 @@ export default function TeamsPage() {
         fetchData('Results')
       ]);
       
-      // Calculate individual points
+      // Calculate points
       const mPoints = {};
+      const tPoints = {};
+      
+      t.forEach(team => tPoints[team.Team_Name] = 0);
       m.forEach(mem => mPoints[mem.Member_Name] = 0);
+
       r.forEach(res => {
-        if (mPoints[res.Winner_ID] !== undefined) {
-          mPoints[res.Winner_ID] += parseInt(res.Points_Awarded) || 0;
+        const pts = parseInt(res.Points_Awarded) || 0;
+        const winner = res.Winner_ID;
+
+        if (mPoints[winner] !== undefined) {
+          mPoints[winner] += pts;
+          const memberObj = m.find(mem => mem.Member_Name === winner);
+          if (memberObj && tPoints[memberObj.Team_ID] !== undefined) {
+            tPoints[memberObj.Team_ID] += pts;
+          }
+        } else if (tPoints[winner] !== undefined) {
+          tPoints[winner] += pts;
         }
       });
 
-      setTeams(t);
-      setMembers(m.map(mem => ({ ...mem, points: mPoints[mem.Member_Name] })));
+      setTeams(t.map(team => ({ ...team, Total_Points: tPoints[team.Team_Name] || 0 })));
+      setMembers(m.map(mem => ({ ...mem, points: mPoints[mem.Member_Name] || 0 })));
       setResults(r);
       setLoading(false);
     };
