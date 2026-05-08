@@ -50,38 +50,42 @@ export default function Home() {
       {/* Top ticker bar */}
       {feedItems.length > 0 && <LiveFeed items={feedItems} />}
 
-      <div style={{ padding: '2rem 5%' }}>
-
-      {/* Upcoming Marquee */}
+      {/* Upcoming strip - full width, no box */}
       {upcoming.length > 0 && (
-        <div style={{ 
-          background: 'rgba(255,255,255,0.03)',
-          borderRadius: '16px',
-          border: '1px solid var(--glass-border)',
+        <div style={{
           display: 'flex',
           alignItems: 'center',
           overflow: 'hidden',
-          marginBottom: '3rem',
-          position: 'relative'
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          background: 'rgba(10,10,15,0.6)',
+          padding: '0.5rem 5%',
+          gap: '1.5rem'
         }}>
-          <div style={{ background: 'linear-gradient(90deg, #121215 80%, transparent)', padding: '1rem 2rem', zIndex: '10', position: 'relative', fontWeight: 'bold' }}>
-            <span className="gradient-text">UPCOMING</span>
-          </div>
-          <div className="marquee" style={{ zIndex: '1' }}>
+          <span style={{
+            fontWeight: '700',
+            fontSize: '0.78rem',
+            letterSpacing: '0.12em',
+            color: 'var(--accent-primary)',
+            flexShrink: 0,
+            textTransform: 'uppercase'
+          }}>Upcoming</span>
+          <div className="marquee">
             {[...upcoming, ...upcoming].map((p, i) => (
-              <span key={i} style={{ whiteSpace: 'nowrap', fontWeight: '500' }}>⚡ {p.Program_Name}</span>
+              <span key={i} style={{ whiteSpace: 'nowrap', fontWeight: '500', fontSize: '0.88rem', color: 'rgba(255,255,255,0.75)' }}>
+                ⚡ {p.Program_Name} <span style={{ color: 'var(--text-dim)', fontSize: '0.78rem' }}>({p.Category})</span>
+              </span>
             ))}
           </div>
         </div>
       )}
 
-      <header style={{ textAlign: 'center', marginBottom: '4rem' }}>
-        <h1 style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>Housing <span className="gradient-text">Grand Finale</span></h1>
-        <p style={{ color: 'var(--text-dim)', fontSize: '1.2rem' }}>Event Overview & Standings</p>
-      </header>
+      <div style={{ padding: '2rem 5%' }}>
+        <header style={{ textAlign: 'center', marginBottom: '4rem' }}>
+          <h1 style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>Housing <span className="gradient-text">Grand Finale</span></h1>
+          <p style={{ color: 'var(--text-dim)', fontSize: '1.2rem' }}>Event Overview & Standings</p>
+        </header>
 
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
         {/* Team Standings */}
         <section className="glass-card">
           <h2 style={{ marginBottom: '2rem' }}>🛡️ Team <span className="gradient-text">Standings</span></h2>
