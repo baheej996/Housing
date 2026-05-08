@@ -1,9 +1,11 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const tabs = [
     { 
@@ -28,6 +30,11 @@ export default function BottomNav() {
     },
   ];
 
+  useEffect(() => {
+    const index = tabs.findIndex(tab => pathname === tab.path);
+    if (index !== -1) setActiveIndex(index);
+  }, [pathname]);
+
   if (pathname.startsWith('/admin') || pathname === '/login') return null;
 
   return (
@@ -46,9 +53,23 @@ export default function BottomNav() {
       display: 'flex',
       alignItems: 'center',
       boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
+      position: 'relative'
     }}>
-      {tabs.map((tab) => {
-        const isActive = pathname === tab.path;
+      {/* Liquid sliding bubble background */}
+      <div style={{
+        position: 'absolute',
+        top: '0.4rem',
+        bottom: '0.4rem',
+        left: `calc(0.4rem + ${activeIndex * 85}px)`,
+        width: '85px',
+        background: 'rgba(255,255,255,0.1)',
+        borderRadius: '32px',
+        transition: 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        zIndex: 0
+      }} />
+
+      {tabs.map((tab, idx) => {
+        const isActive = activeIndex === idx;
         return (
           <Link key={tab.path} href={tab.path} style={{
             textDecoration: 'none',
@@ -58,19 +79,20 @@ export default function BottomNav() {
             justifyContent: 'center',
             width: '85px',
             height: '70px',
-            borderRadius: '32px',
             color: isActive ? 'white' : 'rgba(255,255,255,0.4)',
-            background: isActive ? 'rgba(255,255,255,0.1)' : 'transparent',
             transition: 'all 0.3s ease',
-            gap: '4px'
+            gap: '4px',
+            zIndex: 1,
+            position: 'relative'
           }}>
-            <div style={{ transform: isActive ? 'scale(1.1)' : 'scale(1)', transition: '0.3s' }}>
+            <div style={{ transform: isActive ? 'scale(1.1)' : 'scale(1)', transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
               {tab.icon}
             </div>
             <span style={{ 
               fontSize: '0.7rem', 
               fontWeight: isActive ? '600' : '500',
-              opacity: isActive ? 1 : 0.7
+              opacity: isActive ? 1 : 0.7,
+              transition: 'opacity 0.3s ease'
             }}>
               {tab.name}
             </span>

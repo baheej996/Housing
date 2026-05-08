@@ -1,71 +1,21 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { fetchData } from '@/lib/api';
+import { useGlobalData } from '@/components/DataProvider';
 
 export default function Home() {
-  const [teams, setTeams] = useState([]);
-  const [members, setMembers] = useState([]);
-  const [results, setResults] = useState([]);
-  const [upcoming, setUpcoming] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [teamData, memberData, resultData, programData] = await Promise.all([
-          fetchData('Teams'),
-          fetchData('Members'),
-          fetchData('Results'),
-          fetchData('Programs')
-        ]);
-        
-        const teamTotals = {};
-        const memberTotals = {};
-        teamData.forEach(t => teamTotals[t.Team_Name] = 0);
-        memberData.forEach(m => memberTotals[m.Member_Name] = { pts: 0, team: m.Team_ID });
-
-        resultData.forEach(r => {
-          const pts = parseInt(r.Points_Awarded) || 0;
-          const winner = r.Winner_ID;
-          if (memberTotals[winner]) {
-            memberTotals[winner].pts += pts;
-            const teamOfMember = memberTotals[winner].team;
-            if (teamTotals[teamOfMember] !== undefined) teamTotals[teamOfMember] += pts;
-          } else if (teamTotals[winner] !== undefined) {
-            teamTotals[winner] += pts;
-          }
-        });
-
-        setTeams(teamData.map(t => ({
-          ...t,
-          Total_Points: teamTotals[t.Team_Name] || 0
-        })).sort((a, b) => b.Total_Points - a.Total_Points));
-
-        setMembers(memberData.map(m => ({
-          ...m,
-          Individual_Points: memberTotals[m.Member_Name]?.pts || 0
-        })).sort((a, b) => b.Individual_Points - a.Individual_Points));
-        
-        const groupedResults = {};
-        const completedProgramIds = new Set();
-        resultData.forEach(r => {
-          const id = r.Program_ID || 'Unknown';
-          completedProgramIds.add(id);
-          if (!groupedResults[id]) groupedResults[id] = [];
-          groupedResults[id].push(r);
-        });
-        setResults(Object.entries(groupedResults).reverse());
-
-        setUpcoming(programData.filter(p => !completedProgramIds.has(p.Program_Name)));
-      } catch (err) {
-        console.error("Error loading home data:", err);
-      }
-      setLoading(false);
-    };
-    loadData();
-  }, []);
+  const { teams, members, results, programs, loading } = useGlobalData();
 
   if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading Grand Finale...</div>;
+
+  const groupedResults = {};
+  const completedProgramIds = new Set();
+  results.forEach(r => {
+    const id = r.Program_ID || 'Unknown';
+    completedProgramIds.add(id);
+    if (!groupedResults[id]) groupedResults[id] = [];
+    groupedResults[id].push(r);
+  });
+  const recentResults = Object.entries(groupedResults).reverse();
+  const upcoming = programs.filter(p => !completedProgramIds.has(p.Program_Name));
 
   return (
     <main style={{ padding: '2rem 5% 8rem 5%' }}>
@@ -112,7 +62,7 @@ export default function Home() {
         <section className="glass-card">
           <h2 style={{ marginBottom: '2rem' }}>🎉 Latest <span className="gradient-text">Results</span></h2>
           <div style={{ display: 'grid', gap: '1.5rem' }}>
-            {results.slice(0, 5).map(([name, winners], i) => (
+            {recentResults.slice(0, 5).map(([name, winners], i) => (
               <div key={i} style={{ borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.8rem' }}>
                 <h3 style={{ fontSize: '1rem', marginBottom: '0.3rem' }}>{name}</h3>
                 <span style={{ fontSize: '0.85rem', color: 'var(--accent-secondary)' }}>

@@ -1,50 +1,8 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { fetchData } from '@/lib/api';
+import { useGlobalData } from '@/components/DataProvider';
 
 export default function TeamsPage() {
-  const [teams, setTeams] = useState([]);
-  const [members, setMembers] = useState([]);
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadData = async () => {
-      const [t, m, r] = await Promise.all([
-        fetchData('Teams'),
-        fetchData('Members'),
-        fetchData('Results')
-      ]);
-      
-      // Calculate points
-      const mPoints = {};
-      const tPoints = {};
-      
-      t.forEach(team => tPoints[team.Team_Name] = 0);
-      m.forEach(mem => mPoints[mem.Member_Name] = 0);
-
-      r.forEach(res => {
-        const pts = parseInt(res.Points_Awarded) || 0;
-        const winner = res.Winner_ID;
-
-        if (mPoints[winner] !== undefined) {
-          mPoints[winner] += pts;
-          const memberObj = m.find(mem => mem.Member_Name === winner);
-          if (memberObj && tPoints[memberObj.Team_ID] !== undefined) {
-            tPoints[memberObj.Team_ID] += pts;
-          }
-        } else if (tPoints[winner] !== undefined) {
-          tPoints[winner] += pts;
-        }
-      });
-
-      setTeams(t.map(team => ({ ...team, Total_Points: tPoints[team.Team_Name] || 0 })));
-      setMembers(m.map(mem => ({ ...mem, points: mPoints[mem.Member_Name] || 0 })));
-      setResults(r);
-      setLoading(false);
-    };
-    loadData();
-  }, []);
+  const { teams, members, loading } = useGlobalData();
 
   if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading Squads...</div>;
 

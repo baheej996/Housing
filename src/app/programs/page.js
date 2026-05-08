@@ -1,29 +1,8 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { fetchData } from '@/lib/api';
+import { useGlobalData } from '@/components/DataProvider';
 
 export default function ProgramsPage() {
-  const [programs, setPrograms] = useState([]);
-  const [results, setResults] = useState([]);
-  const [settings, setSettings] = useState({});
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadData = async () => {
-      const [p, r, s] = await Promise.all([
-        fetchData('Programs'),
-        fetchData('Results'),
-        fetchData('Settings')
-      ]);
-      setPrograms(p);
-      setResults(r);
-      const sObj = {};
-      s.forEach(item => sObj[item.Setting_Name] = item.Value);
-      setSettings(sObj);
-      setLoading(false);
-    };
-    loadData();
-  }, []);
+  const { programs, results, settings, loading } = useGlobalData();
 
   if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading Programs...</div>;
 

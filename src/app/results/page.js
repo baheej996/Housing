@@ -1,27 +1,8 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { fetchData } from '@/lib/api';
+import { useGlobalData } from '@/components/DataProvider';
 
 export default function ResultsPage() {
-  const [results, setResults] = useState([]);
-  const [members, setMembers] = useState([]);
-  const [teams, setTeams] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadData = async () => {
-      const [r, m, t] = await Promise.all([
-        fetchData('Results'),
-        fetchData('Members'),
-        fetchData('Teams')
-      ]);
-      setResults(r);
-      setMembers(m);
-      setTeams(t);
-      setLoading(false);
-    };
-    loadData();
-  }, []);
+  const { results, members, teams, loading } = useGlobalData();
 
   if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading Results...</div>;
 
