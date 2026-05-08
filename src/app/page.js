@@ -5,6 +5,7 @@ import PlayerModal from '@/components/PlayerModal';
 import LiveFeed from '@/components/LiveFeed';
 import PhotoGallery from '@/components/PhotoGallery';
 import CountUp from '@/components/CountUp';
+import TeamChart from '@/components/TeamChart';
 
 export default function Home() {
   const { teams, members, results, programs, photos, loading } = useGlobalData();
@@ -99,46 +100,42 @@ export default function Home() {
       <PhotoGallery photos={photos} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '2.5rem' }}>
-        {/* Team Standings - Redesigned */}
-        <section className="glass-card" style={{ gridColumn: '1 / -1' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
-            <h2 style={{ fontSize: '1.8rem' }}>🛡️ Team <span className="vibrant-gradient-text">Standings</span></h2>
-            <span style={{ fontSize: '0.9rem', color: 'var(--text-dim)', background: 'rgba(255,255,255,0.05)', padding: '0.4rem 1rem', borderRadius: '50px' }}>
-              Live Rankings
-            </span>
+        {/* Team Standings - Infographic Redesign */}
+        <section className="glass-card" style={{ gridColumn: '1 / -1', padding: '3rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+            <h2 style={{ fontSize: '2.2rem', marginBottom: '0.5rem' }}>🏆 Championship <span className="vibrant-gradient-text">Race</span></h2>
+            <p style={{ color: 'var(--text-dim)', fontSize: '1rem' }}>Cumulative point progression over the tournament</p>
           </div>
+
+          <TeamChart results={results} teams={teams} />
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.2rem', marginTop: '3rem' }}>
             {teams.map((team, i) => {
               const maxPoints = teams[0]?.Total_Points || 1;
               const percentage = Math.max(10, (team.Total_Points / maxPoints) * 100);
+              const colors = ['#6366f1', '#ec4899', '#f59e0b', '#10b981'];
+              const teamColor = colors[i % colors.length];
               
               return (
-                <div key={i} className="leaderboard-item" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '1.2rem', padding: '1.5rem 2rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
-                      <div className={`rank-badge ${i < 3 ? `rank-${i+1}` : ''}`} style={i >= 3 ? { background: 'rgba(255,255,255,0.08)', color: 'var(--text-dim)' } : {}}>
-                        {i + 1}
+                <div key={i} className="leaderboard-item" style={{ 
+                  background: 'rgba(255,255,255,0.01)', 
+                  border: `1px solid rgba(255,255,255,0.05)`,
+                  borderLeft: `4px solid ${teamColor}`,
+                  padding: '1.2rem 1.5rem'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.2rem' }}>
+                        RANK #{i+1}
                       </div>
-                      <span style={{ fontSize: '1.4rem', fontWeight: '800', letterSpacing: '-0.02em' }}>{team.Team_Name}</span>
+                      <span style={{ fontSize: '1.1rem', fontWeight: '800' }}>{team.Team_Name}</span>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <span style={{ fontSize: '1.6rem', fontWeight: '900', color: i === 0 ? 'var(--gold)' : 'white' }}>
+                      <span style={{ fontSize: '1.4rem', fontWeight: '900', color: teamColor }}>
                         <CountUp end={team.Total_Points} />
                       </span>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginLeft: '0.4rem', fontWeight: '600' }}>PTS</span>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)', marginLeft: '0.3rem', fontWeight: '700' }}>PTS</span>
                     </div>
-                  </div>
-                  
-                  {/* Progress Bar */}
-                  <div style={{ height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden' }}>
-                    <div style={{ 
-                      width: `${percentage}%`, 
-                      height: '100%', 
-                      background: i === 0 ? 'linear-gradient(90deg, var(--accent-primary), var(--accent-vibrant))' : 'rgba(255,255,255,0.2)',
-                      borderRadius: '10px',
-                      transition: 'width 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
-                    }} />
                   </div>
                 </div>
               );
