@@ -1,7 +1,7 @@
 'use client';
 import { useMemo } from 'react';
 
-export default function TeamChart({ results, teams }) {
+export default function TeamChart({ results, teams, members }) {
   const chartData = useMemo(() => {
     if (!results || results.length === 0 || !teams || teams.length === 0) return null;
 
@@ -18,13 +18,20 @@ export default function TeamChart({ results, teams }) {
     // Add a "Start" point at the beginning
     const finalTimestamps = ['Start', ...sortedTimestamps];
     
+    // Helper to find which team a winner belongs to
+    const getTeamForWinner = (winnerId) => {
+      if (teams.some(t => t.Team_Name === winnerId)) return winnerId;
+      const member = members?.find(m => m.Member_Name === winnerId);
+      return member ? member.Team_ID : null;
+    };
+
     // 2. Calculate cumulative points
     const teamPaths = teams.map(team => {
       let cumulative = 0;
       const points = finalTimestamps.map((ts, idx) => {
         if (idx === 0) return 0; // Everything starts at zero
         const dailyPoints = results
-          .filter(r => (r.Timestamp || 'TBD') === ts && r.Team_ID === team.Team_Name)
+          .filter(r => (r.Timestamp || 'TBD') === ts && getTeamForWinner(r.Winner_ID) === team.Team_Name)
           .reduce((sum, r) => sum + (parseInt(r.Points_Awarded) || 0), 0);
         cumulative += dailyPoints;
         return cumulative;
@@ -33,7 +40,7 @@ export default function TeamChart({ results, teams }) {
     });
 
     return { dates: finalTimestamps, teamPaths };
-  }, [results, teams]);
+  }, [results, teams, members]);
 
   if (!chartData) return null;
 

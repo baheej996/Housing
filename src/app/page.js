@@ -124,7 +124,7 @@ export default function Home() {
                   <p style={{ color: 'var(--text-dim)', fontSize: '1rem' }}>Cumulative point progression over the tournament</p>
                 </div>
 
-                <TeamChart results={results} teams={teams} />
+                <TeamChart results={results} teams={teams} members={members} />
                 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.2rem', marginTop: '3rem' }}>
                   {teams.map((team, i) => {
