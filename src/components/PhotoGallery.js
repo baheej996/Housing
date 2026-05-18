@@ -2,6 +2,18 @@
 import { useState, useRef, useEffect } from 'react';
 
 // Resolves various image URL types (Drive, Direct Links, Local Paths)
+function isVideoUrl(url) {
+  if (!url) return false;
+  const lower = url.trim().toLowerCase();
+  return ['.mp4', '.webm', '.ogg', '.mov'].some(ext => lower.includes(ext));
+}
+
+function getYouTubeId(url) {
+  if (!url) return null;
+  const match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+  return match ? match[1] : null;
+}
+
 function resolveImageUrl(url) {
   if (!url) return 'https://placehold.co/600x400/1a1a1a/ffffff?text=Image+Not+Found';
   
@@ -25,6 +37,78 @@ function resolveImageUrl(url) {
 
   // 3. Direct Links (Imgur, Postimages, etc.)
   return trimmed;
+}
+
+function renderMedia(photo, isLightbox = false) {
+  const url = photo.Image_URL;
+  if (!url) {
+    return <img src="https://placehold.co/600x400/1a1a1a/ffffff?text=No+Media" alt="Missing" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
+  }
+
+  const ytId = getYouTubeId(url);
+  if (ytId) {
+    return (
+      <iframe 
+        width="100%" 
+        height="100%" 
+        src={`https://www.youtube.com/embed/${ytId}${isLightbox ? '?autoplay=1' : '&mute=1&autoplay=1&controls=0&loop=1&playlist=' + ytId}`}
+        frameBorder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowFullScreen={isLightbox}
+        style={{ 
+          pointerEvents: isLightbox ? 'auto' : 'none', 
+          border: 'none', 
+          borderRadius: isLightbox ? '24px' : '0',
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover'
+        }}
+      />
+    );
+  }
+
+  const isVid = isVideoUrl(url);
+  if (isVid) {
+    return (
+      <video 
+        src={resolveImageUrl(url)} 
+        autoPlay={!isLightbox}
+        muted={!isLightbox} 
+        loop={!isLightbox}
+        playsInline
+        controls={isLightbox}
+        style={{ 
+          width: '100%', 
+          height: '100%', 
+          objectFit: isLightbox ? 'contain' : 'cover', 
+          borderRadius: isLightbox ? '24px' : '0',
+          maxHeight: isLightbox ? '80vh' : 'auto'
+        }}
+        onClick={isLightbox ? (e) => e.stopPropagation() : undefined}
+      />
+    );
+  }
+
+  // Fallback to image
+  return (
+    <img
+      src={resolveImageUrl(url)}
+      alt={photo.Caption || 'Gallery Media'}
+      onError={(e) => { e.target.src = 'https://placehold.co/400x300/1a1a1a/ffffff?text=Link+Broken'; }}
+      style={{ 
+        width: '100%', 
+        height: '100%', 
+        objectFit: isLightbox ? 'contain' : 'cover', 
+        display: 'block', 
+        pointerEvents: isLightbox ? 'auto' : 'none', 
+        borderRadius: isLightbox ? '24px' : '0',
+        maxWidth: isLightbox ? '95vw' : '100%',
+        maxHeight: isLightbox ? '80vh' : '100%',
+        boxShadow: isLightbox ? '0 40px 100px rgba(0,0,0,0.9)' : 'none'
+      }}
+      onClick={isLightbox ? (e) => e.stopPropagation() : undefined}
+    />
+  );
 }
 
 export default function PhotoGallery({ photos }) {
@@ -71,18 +155,7 @@ export default function PhotoGallery({ photos }) {
             padding: '2rem',
             animation: 'fadeIn 0.3s ease'
           }}>
-          <img
-            src={resolveImageUrl(lightbox.Image_URL)}
-            alt={lightbox.Caption || ''}
-            onError={(e) => { e.target.src = 'https://placehold.co/800x600/1a1a1a/ffffff?text=Image+Load+Error'; }}
-            style={{
-              maxWidth: '95vw', maxHeight: '80vh',
-              borderRadius: '24px',
-              boxShadow: '0 40px 100px rgba(0,0,0,0.9)',
-              objectFit: 'contain'
-            }}
-            onClick={e => e.stopPropagation()}
-          />
+          {renderMedia(lightbox, true)}
           {lightbox.Caption && (
             <p style={{ marginTop: '1.5rem', color: 'white', fontSize: '1.1rem', fontWeight: '500', textAlign: 'center' }}>
               {lightbox.Caption}
@@ -138,12 +211,16 @@ export default function PhotoGallery({ photos }) {
               onMouseDown={e => e.currentTarget.style.transform = 'scale(0.97)'}
               onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
             >
-              <img
-                src={resolveImageUrl(photo.Image_URL)}
-                alt={photo.Caption || `Photo ${i + 1}`}
-                onError={(e) => { e.target.src = 'https://placehold.co/400x300/1a1a1a/ffffff?text=Link+Broken'; }}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none' }}
-              />
+              {renderMedia(photo, false)}
+              {isVideoUrl(photo.Image_URL) || getYouTubeId(photo.Image_URL) ? (
+                <div style={{
+                  position: 'absolute', top: '10px', right: '10px',
+                  background: 'rgba(0,0,0,0.6)', padding: '0.4rem', borderRadius: '50%',
+                  backdropFilter: 'blur(5px)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+              ) : null}
               {photo.Caption && (
                 <div style={{
                   position: 'absolute', bottom: 0, left: 0, right: 0,
