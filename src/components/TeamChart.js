@@ -6,7 +6,7 @@ export default function TeamChart({ results, teams, members }) {
     if (!results || results.length === 0 || !teams || teams.length === 0) return null;
 
     // 1. Get unique dates/timestamps and add a "Start" point
-    const uniqueTimestamps = [...new Set(results.map(r => r.Timestamp || 'TBD'))];
+    const uniqueTimestamps = [...new Set(results.map(r => r.Date || r.Timestamp || 'TBD'))];
     
     const sortedTimestamps = uniqueTimestamps.sort((a, b) => {
       const dateA = new Date(a);
@@ -31,7 +31,7 @@ export default function TeamChart({ results, teams, members }) {
       const points = finalTimestamps.map((ts, idx) => {
         if (idx === 0) return 0; // Everything starts at zero
         const dailyPoints = results
-          .filter(r => (r.Timestamp || 'TBD') === ts && getTeamForWinner(r.Winner_ID) === team.Team_Name)
+          .filter(r => (r.Date || r.Timestamp || 'TBD') === ts && getTeamForWinner(r.Winner_ID) === team.Team_Name)
           .reduce((sum, r) => sum + (parseInt(r.Points_Awarded) || 0), 0);
         cumulative += dailyPoints;
         return cumulative;
