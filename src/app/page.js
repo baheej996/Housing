@@ -94,19 +94,19 @@ export default function Home() {
       )}
 
       <div style={{ padding: '2rem 5%' }}>
-        <header style={{ textAlign: 'center', marginBottom: '5rem', marginTop: '2rem' }}>
+        <header style={{ textAlign: 'center', marginBottom: '5rem', marginTop: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
           <Reveal>
             <motion.h1 
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 1, ease: "easeOut" }}
-              style={{ fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', marginBottom: '1rem', lineHeight: 1.1 }}
+              style={{ fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', marginBottom: '1rem', lineHeight: 1.1, textAlign: 'center' }}
             >
               Housing <span className="vibrant-gradient-text">Grand Finale</span>
             </motion.h1>
           </Reveal>
           <Reveal delay={0.2}>
-            <p style={{ color: 'var(--text-dim)', fontSize: '1.2rem', fontWeight: '500' }}>The Battle for Ultimate Glory</p>
+            <p style={{ color: 'var(--text-dim)', fontSize: '1.2rem', fontWeight: '500', textAlign: 'center' }}>The Battle for Ultimate Glory</p>
           </Reveal>
         </header>
 
