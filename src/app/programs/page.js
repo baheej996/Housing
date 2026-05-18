@@ -51,7 +51,8 @@ export default function ProgramsPage() {
           onBlur={e => e.target.style.borderColor = 'var(--glass-border)'}
         />
         {search && <button onClick={() => setSearch('')} style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', width: '28px', height: '28px', borderRadius: '50%', cursor: 'pointer', fontSize: '1rem' }}>×</button>}
-      </div>
+        </div>
+      </Reveal>
 
       {/* Filter Chips */}
       <Reveal delay={0.3}>
