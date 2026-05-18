@@ -20,8 +20,8 @@ function resolveImageUrl(url) {
   const trimmed = url.trim();
   const lower = trimmed.toLowerCase();
 
-  // 1. Handle Local Paths (e.g., "IMG_123.PNG" or "winner.jpg")
-  const extensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg'];
+  // 1. Handle Local Paths (e.g., "IMG_123.PNG" or "winner.jpg" or "video.mp4")
+  const extensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg', '.mp4', '.webm', '.ogg', '.mov'];
   const isLocal = !trimmed.startsWith('http') && extensions.some(ext => lower.endsWith(ext));
   
   if (isLocal) {
