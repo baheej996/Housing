@@ -72,7 +72,7 @@ function renderMedia(photo, isLightbox = false) {
     return (
       <video 
         src={resolveImageUrl(url)} 
-        autoPlay={!isLightbox}
+        autoPlay 
         muted={!isLightbox} 
         loop={!isLightbox}
         playsInline
@@ -82,9 +82,18 @@ function renderMedia(photo, isLightbox = false) {
           height: '100%', 
           objectFit: isLightbox ? 'contain' : 'cover', 
           borderRadius: isLightbox ? '24px' : '0',
-          maxHeight: isLightbox ? '80vh' : 'auto'
+          maxHeight: isLightbox ? '80vh' : 'auto',
+          pointerEvents: isLightbox ? 'auto' : 'none'
         }}
-        onClick={isLightbox ? (e) => e.stopPropagation() : undefined}
+        onClick={isLightbox ? (e) => {
+          e.stopPropagation();
+          const video = e.target;
+          if (video.paused) {
+            video.play();
+          } else {
+            video.pause();
+          }
+        } : undefined}
       />
     );
   }
