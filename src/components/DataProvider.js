@@ -19,6 +19,17 @@ export function DataProvider({ children }) {
 
   const loadAllData = async () => {
     try {
+      // 1. Instant Load from Cache
+      if (typeof window !== 'undefined' && data.loading) {
+        const cached = localStorage.getItem('sportsAppCache');
+        if (cached) {
+          try {
+            setData({ ...JSON.parse(cached), loading: false });
+          } catch(e) { console.error('Cache read error', e); }
+        }
+      }
+
+      // 2. Background Fetch Fresh Data
       const [teamData, memberData, resultData, programData, settingsData, photoData] = await Promise.all([
         fetchData('Teams'),
         fetchData('Members'),
@@ -68,7 +79,7 @@ export function DataProvider({ children }) {
         resultsByProgram[r.Program_ID].push(r);
       });
 
-      setData({
+      const newData = {
         teams: calculatedTeams,
         members: calculatedMembers,
         results: resultData,
@@ -77,7 +88,14 @@ export function DataProvider({ children }) {
         settings: settingsObj,
         photos: photoData || [],
         loading: false,
-      });
+      };
+
+      // 3. Update State & Cache
+      setData(newData);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('sportsAppCache', JSON.stringify(newData));
+      }
+
     } catch (err) {
       console.error("Error loading global data:", err);
       setData(prev => ({ ...prev, loading: false }));
