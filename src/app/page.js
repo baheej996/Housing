@@ -129,13 +129,12 @@ export default function Home() {
                 <div style={{ 
                   position: 'relative',
                   width: '100%',
-                  height: '500px',
+                  maxWidth: '700px',
+                  margin: '3rem auto 0 auto',
                   borderRadius: '24px',
                   overflow: 'hidden',
-                  border: '1px solid rgba(255,255,255,0.1)',
                   boxShadow: '0 30px 60px rgba(0,0,0,0.8)',
-                  background: '#0a0a0c',
-                  marginTop: '3rem'
+                  border: '1px solid rgba(255,255,255,0.1)'
                 }}>
                   {(() => {
                     const fikrTeam = teams.find(t => t.Team_Name.toUpperCase() === 'FIKR') || teams[0] || { Team_Name: 'FIKR', Total_Points: 0 };
@@ -143,168 +142,59 @@ export default function Home() {
 
                     return (
                       <>
-                        {/* Left Side - FIKR (Blue) */}
-                        <div style={{
-                          position: 'absolute',
-                          left: 0, top: 0, bottom: 0,
-                          width: '53%',
-                          background: 'linear-gradient(135deg, #0b132b, #1c2541)',
-                          clipPath: 'polygon(0 0, 100% 0, 87% 100%, 0 100%)',
-                          zIndex: 1,
-                          overflow: 'hidden'
-                        }}>
-                          {/* Leader Image */}
-                          <img 
-                            src="/images/team_leader_b.png" 
-                            alt="FIKR Leader" 
-                            style={{
-                              position: 'absolute',
-                              bottom: '-10px',
-                              left: '42%',
-                              transform: 'translateX(-50%)',
-                              height: '82%',
-                              objectFit: 'contain',
-                              zIndex: 1,
-                              filter: 'drop-shadow(0 0 15px rgba(0,0,0,0.6))'
-                            }}
-                          />
-                          {/* Dark vignette to blend bottom */}
-                          <div style={{
-                            position: 'absolute', inset: 0, zIndex: 2,
-                            background: 'linear-gradient(0deg, rgba(10,10,15,0.8) 0%, rgba(10,10,15,0) 40%)'
-                          }} />
-                          
-                          {/* Text elements */}
-                          <div style={{
-                            position: 'absolute',
-                            top: '12%',
-                            left: '38%',
-                            transform: 'translateX(-50%)',
-                            zIndex: 3,
-                            textAlign: 'center'
-                          }}>
-                            <div style={{
-                              background: 'white',
-                              color: 'black',
-                              padding: '0.4rem 2.2rem',
-                              borderRadius: '12px',
-                              fontWeight: '900',
-                              fontSize: '1.2rem',
-                              letterSpacing: '0.05em',
-                              boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
-                              textTransform: 'uppercase'
-                            }}>
-                              {fikrTeam.Team_Name}
-                            </div>
-                          </div>
-
-                          <div style={{
-                            position: 'absolute',
-                            bottom: '8%',
-                            left: '38%',
-                            transform: 'translateX(-50%)',
-                            zIndex: 3,
-                            color: 'white',
-                            fontSize: 'clamp(4.5rem, 10vw, 7.5rem)',
-                            fontWeight: '950',
-                            fontFamily: 'Impact, sans-serif',
-                            letterSpacing: '-0.02em',
-                            textShadow: '0 4px 20px rgba(0,0,0,0.8)'
-                          }}>
-                            <CountUp end={fikrTeam.Total_Points} />
-                          </div>
-                        </div>
-
-                        {/* Right Side - NOOR (Purple) */}
-                        <div style={{
-                          position: 'absolute',
-                          right: 0, top: 0, bottom: 0,
-                          width: '53%',
-                          background: 'linear-gradient(135deg, #4c0519, #881337)',
-                          clipPath: 'polygon(13% 0, 100% 0, 100% 100%, 0 100%)',
-                          zIndex: 1,
-                          overflow: 'hidden'
-                        }}>
-                          {/* Leader Image */}
-                          <img 
-                            src="/images/team_leader_a.png" 
-                            alt="NOOR Leader" 
-                            style={{
-                              position: 'absolute',
-                              bottom: '-10px',
-                              right: '42%',
-                              transform: 'translateX(50%)',
-                              height: '82%',
-                              objectFit: 'contain',
-                              zIndex: 1,
-                              filter: 'drop-shadow(0 0 15px rgba(0,0,0,0.6))'
-                            }}
-                          />
-                          {/* Dark vignette to blend bottom */}
-                          <div style={{
-                            position: 'absolute', inset: 0, zIndex: 2,
-                            background: 'linear-gradient(0deg, rgba(10,10,15,0.8) 0%, rgba(10,10,15,0) 40%)'
-                          }} />
-
-                          {/* Text elements */}
-                          <div style={{
-                            position: 'absolute',
-                            top: '12%',
-                            right: '38%',
-                            transform: 'translateX(50%)',
-                            zIndex: 3,
-                            textAlign: 'center'
-                          }}>
-                            <div style={{
-                              background: 'white',
-                              color: 'black',
-                              padding: '0.4rem 2.2rem',
-                              borderRadius: '12px',
-                              fontWeight: '900',
-                              fontSize: '1.2rem',
-                              letterSpacing: '0.05em',
-                              boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
-                              textTransform: 'uppercase'
-                            }}>
-                              {noorTeam.Team_Name}
-                            </div>
-                          </div>
-
-                          <div style={{
-                            position: 'absolute',
-                            bottom: '8%',
-                            right: '38%',
-                            transform: 'translateX(50%)',
-                            zIndex: 3,
-                            color: 'white',
-                            fontSize: 'clamp(4.5rem, 10vw, 7.5rem)',
-                            fontWeight: '950',
-                            fontFamily: 'Impact, sans-serif',
-                            letterSpacing: '-0.02em',
-                            textShadow: '0 4px 20px rgba(0,0,0,0.8)'
-                          }}>
-                            <CountUp end={noorTeam.Total_Points} />
-                          </div>
-                        </div>
-
-                        {/* Lightning Bolt Divider */}
-                        <div style={{
-                          position: 'absolute',
-                          top: '-15%',
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          height: '130%',
-                          width: '120px',
-                          zIndex: 10,
-                          pointerEvents: 'none'
-                        }}>
-                          <svg viewBox="0 0 100 200" fill="#facc15" style={{
+                        {/* Background Score Board Image */}
+                        <img 
+                          src="/score board.png" 
+                          alt="Championship Scoreboard" 
+                          style={{
                             width: '100%',
-                            height: '100%',
-                            filter: 'drop-shadow(0 0 25px rgba(250,204,21,0.8)) drop-shadow(0 0 10px rgba(250,204,21,0.5))'
-                          }}>
-                            <polygon points="65,0 20,110 52,110 35,200 80,90 48,90" />
-                          </svg>
+                            height: 'auto',
+                            display: 'block'
+                          }}
+                        />
+
+                        {/* Dynamic Overlay for FIKR Score */}
+                        <div style={{
+                          position: 'absolute',
+                          bottom: '7.5%',
+                          left: '25.5%',
+                          transform: 'translateX(-50%)',
+                          color: '#ffffff',
+                          fontSize: 'clamp(3rem, 7vw, 5.5rem)',
+                          fontWeight: '950',
+                          fontFamily: 'Impact, Arial Black, sans-serif',
+                          textAlign: 'center',
+                          zIndex: 5,
+                          // Use a solid text shadow to completely mask the baked-in "150"
+                          textShadow: '0 0 10px #0e122b, 0 0 20px #0e122b, 0 0 30px #0e122b',
+                          background: 'linear-gradient(180deg, #111736 0%, #0d122b 100%)',
+                          padding: '0 0.5rem',
+                          borderRadius: '8px',
+                          minWidth: '150px'
+                        }}>
+                          <CountUp end={fikrTeam.Total_Points} />
+                        </div>
+
+                        {/* Dynamic Overlay for NOOR Score */}
+                        <div style={{
+                          position: 'absolute',
+                          bottom: '7.5%',
+                          right: '25.5%',
+                          transform: 'translateX(50%)',
+                          color: '#ffffff',
+                          fontSize: 'clamp(3rem, 7vw, 5.5rem)',
+                          fontWeight: '950',
+                          fontFamily: 'Impact, Arial Black, sans-serif',
+                          textAlign: 'center',
+                          zIndex: 5,
+                          // Use a solid text shadow to completely mask the baked-in "150"
+                          textShadow: '0 0 10px #3f041b, 0 0 20px #3f041b, 0 0 30px #3f041b',
+                          background: 'linear-gradient(180deg, #44041b 0%, #300313 100%)',
+                          padding: '0 0.5rem',
+                          borderRadius: '8px',
+                          minWidth: '150px'
+                        }}>
+                          <CountUp end={noorTeam.Total_Points} />
                         </div>
                       </>
                     );
