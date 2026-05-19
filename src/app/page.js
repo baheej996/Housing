@@ -126,32 +126,88 @@ export default function Home() {
 
                 <TeamChart results={results} teams={teams} members={members} />
                 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.2rem', marginTop: '3rem' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  flexWrap: 'wrap', 
+                  gap: '2rem', 
+                  marginTop: '3rem', 
+                  justifyContent: 'center' 
+                }}>
                   {teams.map((team, i) => {
-                    const colors = ['#6366f1', '#ec4899', '#f59e0b', '#10b981'];
-                    const teamColor = colors[i % colors.length];
+                    // Specific team colors and images
+                    const styling = [
+                      { color: '#a855f7', img: '/images/leader_1.png', glow: 'rgba(168, 85, 247, 0.4)' }, // Purple for team 1
+                      { color: '#3b82f6', img: '/images/leader_2.png', glow: 'rgba(59, 130, 246, 0.4)' }, // Blue for team 2
+                      { color: '#f59e0b', img: '/images/leader_1.png', glow: 'rgba(245, 158, 11, 0.4)' }, 
+                      { color: '#10b981', img: '/images/leader_2.png', glow: 'rgba(16, 185, 129, 0.4)' }
+                    ];
+                    
+                    const theme = styling[i % styling.length];
                     
                     return (
-                      <Reveal key={i} delay={0.1 * i}>
+                      <Reveal key={i} delay={0.1 * i} style={{ flex: '1 1 300px', maxWidth: '400px' }}>
                         <Tilt>
-                          <div className="leaderboard-item" style={{ 
-                            background: 'rgba(255,255,255,0.01)', 
-                            border: `1px solid rgba(255,255,255,0.05)`,
-                            borderLeft: `4px solid ${teamColor}`,
-                            padding: '1.2rem 1.5rem'
+                          <div style={{ 
+                            position: 'relative',
+                            height: '450px',
+                            borderRadius: '24px',
+                            overflow: 'hidden',
+                            background: `linear-gradient(180deg, rgba(10,10,15,0) 0%, rgba(10,10,15,1) 100%), radial-gradient(circle at 50% 50%, ${theme.glow} 0%, rgba(10,10,15,0) 70%)`,
+                            border: `1px solid rgba(255,255,255,0.1)`,
+                            borderBottom: `4px solid ${theme.color}`,
+                            boxShadow: `0 20px 50px -10px ${theme.glow}`,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'flex-end',
+                            padding: '2rem'
                           }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                              <div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.2rem' }}>
-                                  RANK #{i+1}
-                                </div>
-                                <span style={{ fontSize: '1.1rem', fontWeight: '800' }}>{team.Team_Name}</span>
+                            
+                            {/* Leader Image */}
+                            <img 
+                              src={theme.img} 
+                              alt="Team Leader" 
+                              style={{
+                                position: 'absolute',
+                                bottom: '0',
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                height: '90%',
+                                objectFit: 'contain',
+                                zIndex: 0,
+                                filter: 'drop-shadow(0px 0px 20px rgba(0,0,0,0.8))',
+                                pointerEvents: 'none'
+                              }}
+                            />
+
+                            {/* Lighting / Vignette over image */}
+                            <div style={{
+                              position: 'absolute', inset: 0, zIndex: 1,
+                              background: 'linear-gradient(0deg, #0a0a0c 10%, transparent 60%)'
+                            }} />
+
+                            {/* Content */}
+                            <div style={{ position: 'relative', zIndex: 2, textAlign: 'center' }}>
+                              <div style={{ 
+                                display: 'inline-block',
+                                background: theme.color, 
+                                color: '#fff', 
+                                padding: '0.3rem 1rem', 
+                                borderRadius: '50px',
+                                fontSize: '0.8rem', 
+                                fontWeight: '800', 
+                                textTransform: 'uppercase', 
+                                letterSpacing: '0.1em', 
+                                marginBottom: '0.8rem',
+                                boxShadow: `0 0 15px ${theme.color}`
+                              }}>
+                                RANK #{i+1}
                               </div>
-                              <div style={{ textAlign: 'right' }}>
-                                <span style={{ fontSize: '1.4rem', fontWeight: '900', color: teamColor }}>
-                                  <CountUp end={team.Total_Points} />
-                                </span>
-                                <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)', marginLeft: '0.3rem', fontWeight: '700' }}>PTS</span>
+                              <h3 style={{ fontSize: '2rem', fontWeight: '900', marginBottom: '0.5rem', textTransform: 'uppercase', textShadow: '0 4px 10px rgba(0,0,0,0.5)' }}>
+                                {team.Team_Name}
+                              </h3>
+                              <div style={{ fontSize: '3rem', fontWeight: '900', color: theme.color, lineHeight: 1, textShadow: '0 4px 20px rgba(0,0,0,0.8)' }}>
+                                <CountUp end={team.Total_Points} />
+                                <span style={{ fontSize: '1rem', color: 'var(--text-dim)', marginLeft: '0.5rem' }}>PTS</span>
                               </div>
                             </div>
                           </div>
