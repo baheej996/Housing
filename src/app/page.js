@@ -1,19 +1,45 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGlobalData } from '@/components/DataProvider';
 import PlayerModal from '@/components/PlayerModal';
 import LiveFeed from '@/components/LiveFeed';
 import PhotoGallery from '@/components/PhotoGallery';
 import CountUp from '@/components/CountUp';
 import TeamChart from '@/components/TeamChart';
-import { Reveal, Tilt, Floating } from '@/components/Animate';
-import { motion } from 'framer-motion';
+import { Reveal } from '@/components/Animate';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 export default function Home() {
   const { teams, members, results, programs, photos, loading } = useGlobalData();
   const [selectedMember, setSelectedMember] = useState(null);
+  const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 });
 
-  if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading Grand Finale...</div>;
+  // Mouse-follow glow effect tracking
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  if (loading) {
+    return (
+      <div style={{ 
+        height: '100vh', 
+        display: 'flex', 
+        flexDirection: 'column',
+        alignItems: 'center', 
+        justifyContent: 'center',
+        background: '#050507',
+        color: '#ffffff',
+        gap: '1.5rem'
+      }}>
+        <div className="loader-mini" style={{ width: '40px', height: '40px', borderWidth: '3px' }} />
+        <p style={{ fontFamily: 'var(--font-display)', fontWeight: '700', letterSpacing: '0.05em', color: 'var(--text-dim)' }}>INITIALIZING GRAND FINALE...</p>
+      </div>
+    );
+  }
 
   const groupedResults = {};
   const completedProgramIds = new Set();
@@ -26,7 +52,7 @@ export default function Home() {
   const recentResults = Object.entries(groupedResults).reverse();
   const upcoming = programs.filter(p => !completedProgramIds.has(p.Program_Name));
 
-  // Live Feed: Build commentary from latest results (up to 15)
+  // Live Feed: Build commentary from latest results
   const feedItems = [];
   recentResults.slice(0, 5).forEach(([programName, winners]) => {
     winners.sort((a, b) => (a.Position || '').localeCompare(b.Position || '')).forEach(w => {
@@ -42,8 +68,24 @@ export default function Home() {
     });
   });
 
+  const scrollToId = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
-    <main style={{ paddingBottom: '8rem' }}>
+    <main style={{ paddingBottom: '10rem', position: 'relative' }}>
+      {/* Interactive mouse follow ambient circle */}
+      <div 
+        className="cursor-glow" 
+        style={{ 
+          left: `${mousePos.x}px`, 
+          top: `${mousePos.y}px` 
+        }} 
+      />
+
       {selectedMember && (
         <PlayerModal
           member={selectedMember}
@@ -61,62 +103,207 @@ export default function Home() {
           display: 'flex',
           alignItems: 'center',
           overflow: 'hidden',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
-          background: 'rgba(10,10,15,0.6)',
-          padding: '0.5rem 0',
-          gap: '0',
-          position: 'relative'
+          borderBottom: '1px solid rgba(255,255,255,0.04)',
+          background: 'rgba(5,5,7,0.8)',
+          backdropFilter: 'blur(20px)',
+          padding: '0.6rem 0',
+          position: 'relative',
+          zIndex: 10
         }}>
-          {/* Label with gradient fade — "swallows" the scrolling text */}
           <div style={{
             position: 'relative',
             zIndex: 2,
-            padding: '0.5rem 1.5rem 0.5rem 5%',
-            background: 'linear-gradient(90deg, rgba(10,10,15,1) 70%, transparent)',
+            padding: '0.4rem 1.5rem 0.4rem 5%',
+            background: 'linear-gradient(90deg, #050507 80%, transparent)',
             flexShrink: 0
           }}>
             <span style={{
-              fontWeight: '700',
-              fontSize: '0.78rem',
-              letterSpacing: '0.12em',
+              fontWeight: '800',
+              fontSize: '0.72rem',
+              letterSpacing: '0.15em',
               color: 'var(--accent-primary)',
-              textTransform: 'uppercase'
-            }}>Upcoming</span>
+              textTransform: 'uppercase',
+              fontFamily: 'var(--font-display)'
+            }}>Upcoming Events</span>
           </div>
           <div className="marquee" style={{ zIndex: 1 }}>
             {[...upcoming, ...upcoming].map((p, i) => (
-              <span key={i} style={{ whiteSpace: 'nowrap', fontWeight: '500', fontSize: '0.88rem', color: 'rgba(255,255,255,0.75)' }}>
-                ⚡ {p.Program_Name} <span style={{ color: 'var(--text-dim)', fontSize: '0.78rem' }}>({p.Category})</span>
+              <span key={i} style={{ whiteSpace: 'nowrap', fontWeight: '600', fontSize: '0.85rem', color: 'rgba(255,255,255,0.8)' }}>
+                ⚡ {p.Program_Name} <span style={{ color: 'var(--text-dim)', fontSize: '0.75rem', fontWeight: '500' }}>({p.Category})</span>
               </span>
             ))}
           </div>
         </div>
       )}
 
-      <div style={{ padding: '2rem 5%' }}>
-        <header style={{ textAlign: 'center', marginBottom: '5rem', marginTop: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <Reveal>
-            <motion.h1 
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              style={{ fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', marginBottom: '1rem', lineHeight: 1.1, textAlign: 'center' }}
-            >
-              Housing <span className="vibrant-gradient-text">Grand Finale</span>
-            </motion.h1>
-          </Reveal>
-          <Reveal delay={0.2}>
-            <p style={{ color: 'var(--text-dim)', fontSize: '1.2rem', fontWeight: '500', textAlign: 'center' }}>The Battle for Ultimate Glory</p>
-          </Reveal>
-        </header>
+      {/* Apple-style Cinematic Hero Section */}
+      <section style={{
+        minHeight: '85vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '6rem 5% 4rem 5%',
+        position: 'relative',
+        zIndex: 5,
+        textAlign: 'center',
+        overflow: 'hidden'
+      }}>
+        {/* Dynamic floating light circles */}
+        <div style={{
+          position: 'absolute',
+          top: '20%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '280px',
+          height: '280px',
+          background: 'radial-gradient(circle, rgba(0, 229, 255, 0.1) 0%, transparent 70%)',
+          filter: 'blur(50px)',
+          pointerEvents: 'none',
+          zIndex: -1
+        }} />
 
-        {/* 1. Score Board File with Dynamic Overlays - Fully Released & Larger */}
+        <Reveal>
+          <span style={{
+            fontFamily: 'var(--font-display)',
+            fontWeight: '800',
+            fontSize: '0.85rem',
+            letterSpacing: '0.25em',
+            textTransform: 'uppercase',
+            color: 'var(--accent-primary)',
+            marginBottom: '1.5rem',
+            display: 'inline-block',
+            border: '1px solid rgba(0, 229, 255, 0.2)',
+            padding: '0.4rem 1.2rem',
+            borderRadius: '50px',
+            background: 'rgba(0, 229, 255, 0.03)',
+            backdropFilter: 'blur(10px)'
+          }}>
+            HOUSING GRAND FINAL 2024
+          </span>
+        </Reveal>
+
+        <Reveal delay={0.2}>
+          <h1 style={{
+            fontSize: 'clamp(3rem, 9vw, 6.5rem)',
+            fontWeight: '900',
+            lineHeight: '0.95',
+            letterSpacing: '-0.04em',
+            marginBottom: '1.5rem',
+            textTransform: 'uppercase',
+            fontFamily: 'var(--font-display)',
+            background: 'linear-gradient(to bottom, #ffffff 40%, #a2b4c7 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>
+            THE BATTLE FOR<br />
+            <span className="vibrant-gradient-text">ULTIMATE GLORY</span>
+          </h1>
+        </Reveal>
+
+        <Reveal delay={0.3}>
+          <p style={{
+            color: 'var(--text-dim)',
+            fontSize: 'clamp(1rem, 2.5vw, 1.35rem)',
+            maxWidth: '700px',
+            margin: '0 auto 3rem auto',
+            lineHeight: '1.6',
+            fontWeight: '400'
+          }}>
+            Experience Apple-level minimalism integrated with athletic Nike-style energy. Real-time updates, cinematic metrics, and live progression tracking.
+          </p>
+        </Reveal>
+
         <Reveal delay={0.4}>
+          <div style={{ display: 'flex', gap: '1.2rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button 
+              onClick={() => scrollToId('scoreboard')} 
+              className="btn-primary"
+            >
+              🏆 Championship Race
+            </button>
+            <button 
+              onClick={() => scrollToId('gallery')} 
+              style={{
+                background: 'rgba(255,255,255,0.03)',
+                color: '#ffffff',
+                border: '1px solid rgba(255,255,255,0.08)',
+                padding: '0.9rem 2rem',
+                borderRadius: '14px',
+                fontWeight: '700',
+                fontFamily: 'var(--font-display)',
+                fontSize: '0.92rem',
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+              }}
+            >
+              Explore Media
+            </button>
+          </div>
+        </Reveal>
+
+        {/* Minimal Hero Stats / SaaS Metrics Widget */}
+        <Reveal delay={0.5}>
+          <div style={{
+            display: 'flex',
+            gap: '3rem',
+            marginTop: '6rem',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            padding: '1.5rem 3rem',
+            background: 'rgba(255, 255, 255, 0.01)',
+            borderTop: '1px solid rgba(255, 255, 255, 0.03)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.03)',
+            width: '100%',
+            maxWidth: '850px'
+          }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#ffffff', fontFamily: 'var(--font-display)' }}>
+                2 <span style={{ color: 'var(--accent-primary)', fontSize: '1.2rem' }}>ELITE</span>
+              </div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '0.2rem' }}>COMPETING TEAMS</div>
+            </div>
+            <div style={{ width: '1px', height: '30px', background: 'rgba(255,255,255,0.08)' }} />
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#ffffff', fontFamily: 'var(--font-display)' }}>
+                {results.length} <span style={{ color: 'var(--accent-secondary)', fontSize: '1.2rem' }}>LIVE</span>
+              </div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '0.2rem' }}>COMPLETED EVENTS</div>
+            </div>
+            <div style={{ width: '1px', height: '30px', background: 'rgba(255,255,255,0.08)' }} />
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#ffffff', fontFamily: 'var(--font-display)' }}>
+                {photos.length} <span style={{ color: 'var(--accent-sporty)', fontSize: '1.2rem' }}>HD</span>
+              </div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '0.2rem' }}>GALLERY ASSETS</div>
+            </div>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* Speed Line Divider */}
+      <div className="speed-divider" />
+
+      <div style={{ padding: '0 5%' }}>
+        {/* 1. Score Board File with Dynamic Overlays - Fully Released & Larger */}
+        <span id="scoreboard" style={{ display: 'block', height: '1px', marginTop: '-2rem' }} />
+        <Reveal delay={0.2}>
           <div style={{ 
             position: 'relative',
             width: '100%',
             maxWidth: '900px',
-            margin: '0 auto 4rem auto'
+            margin: '0 auto 6rem auto'
           }}>
             {(() => {
               const fikrTeam = teams.find(t => t.Team_Name.toUpperCase() === 'FIKR') || teams[0] || { Team_Name: 'FIKR', Total_Points: 0 };
@@ -168,45 +355,66 @@ export default function Home() {
         </Reveal>
 
         {/* 2. Graph Chart of Teams - Fully Released & Larger */}
-        <Reveal delay={0.5}>
-          <div style={{ width: '100%', maxWidth: '900px', margin: '0 auto 5rem auto' }}>
-            <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-              <h2 style={{ fontSize: '2.2rem', marginBottom: '0.5rem' }}>🏆 Championship <span className="vibrant-gradient-text">Race</span></h2>
-              <p style={{ color: 'var(--text-dim)', fontSize: '1rem' }}>Cumulative point progression over the tournament</p>
+        <Reveal delay={0.3}>
+          <div style={{ width: '100%', maxWidth: '900px', margin: '0 auto 6rem auto' }}>
+            <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+              <h2 style={{ fontSize: '2.5rem', marginBottom: '0.6rem', fontFamily: 'var(--font-display)' }}>🏆 Championship <span className="vibrant-gradient-text">Race</span></h2>
+              <p style={{ color: 'var(--text-dim)', fontSize: '1rem', fontWeight: '500' }}>Cumulative point progression over the tournament</p>
             </div>
             <TeamChart results={results} teams={teams} members={members} />
           </div>
         </Reveal>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '2.5rem' }}>
+        {/* Speed Line Divider */}
+        <div className="speed-divider" />
 
+        {/* 2-Column Responsive Section Grid */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', 
+          gap: '3rem',
+          maxWidth: '1200px',
+          margin: '0 auto 6rem auto'
+        }}>
           {/* Latest Results - Vibrant Refresh */}
           <section>
             <Reveal>
               <div className="glass-card">
-                <h2 style={{ marginBottom: '2rem', fontSize: '1.5rem' }}>🎉 Latest <span className="vibrant-gradient-text">Results</span></h2>
+                <h2 style={{ marginBottom: '2.2rem', fontSize: '1.6rem', fontFamily: 'var(--font-display)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  🎉 Latest <span className="vibrant-gradient-text">Results</span>
+                </h2>
                 <div style={{ display: 'grid', gap: '1.2rem' }}>
                   {recentResults.slice(0, 5).map(([name, winners], i) => (
                     <Reveal key={i} delay={0.1 * i} y={20}>
                       <div style={{ 
-                        background: 'rgba(255,255,255,0.02)', 
-                        padding: '1.2rem', 
-                        borderRadius: '18px',
-                        border: '1px solid rgba(255,255,255,0.04)',
+                        background: 'rgba(255,255,255,0.01)', 
+                        padding: '1.3rem', 
+                        borderRadius: '16px',
+                        border: '1px solid rgba(255,255,255,0.02)',
                         display: 'flex',
                         justifyContent: 'space-between',
-                        alignItems: 'center'
-                      }}>
+                        alignItems: 'center',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseOver={e => {
+                        e.currentTarget.style.borderColor = 'rgba(0, 229, 255, 0.2)';
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+                      }}
+                      onMouseOut={e => {
+                        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.02)';
+                        e.currentTarget.style.background = 'rgba(255,255,255,0.01)';
+                      }}
+                      >
                         <div>
-                          <h3 style={{ fontSize: '0.95rem', marginBottom: '0.4rem', fontWeight: '700' }}>{name}</h3>
+                          <h3 style={{ fontSize: '0.98rem', marginBottom: '0.4rem', fontWeight: '700', color: '#ffffff' }}>{name}</h3>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                             <span style={{ fontSize: '1.1rem' }}>🥇</span>
-                            <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--accent-secondary)' }}>
+                            <span style={{ fontSize: '0.88rem', fontWeight: '700', color: 'var(--accent-primary)' }}>
                               {winners.find(w => w.Position === '1st')?.Winner_ID || 'TBD'}
                             </span>
                           </div>
                         </div>
-                        <div style={{ textAlign: 'right', opacity: 0.5 }}>
+                        <div style={{ textAlign: 'right', opacity: 0.4 }}>
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                         </div>
                       </div>
@@ -221,7 +429,9 @@ export default function Home() {
           <section>
             <Reveal delay={0.2}>
               <div className="glass-card">
-                <h2 style={{ marginBottom: '2rem', fontSize: '1.5rem' }}>🔥 Top <span className="vibrant-gradient-text">Performers</span></h2>
+                <h2 style={{ marginBottom: '2.2rem', fontSize: '1.6rem', fontFamily: 'var(--font-display)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  🔥 Top <span className="vibrant-gradient-text">Performers</span>
+                </h2>
                 <div style={{ display: 'grid', gap: '1rem' }}>
                   {members.sort((a, b) => (b.Individual_Points || 0) - (a.Individual_Points || 0)).slice(0, 5).map((m, i) => (
                     <Reveal key={i} delay={0.1 * i} y={20}>
@@ -229,19 +439,27 @@ export default function Home() {
                         onClick={() => setSelectedMember(m)}
                         style={{ 
                           display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
-                          padding: '0.8rem 1rem', borderRadius: '14px', background: 'rgba(255,255,255,0.02)', 
-                          cursor: 'pointer', border: '1px solid transparent', transition: 'all 0.3s'
+                          padding: '0.9rem 1.2rem', borderRadius: '16px', background: 'rgba(255,255,255,0.01)', 
+                          cursor: 'pointer', border: '1px solid rgba(255,255,255,0.02)', transition: 'all 0.3s ease'
                         }}
-                        onMouseOver={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
-                        onMouseOut={e => e.currentTarget.style.borderColor = 'transparent'}
+                        onMouseOver={e => {
+                          e.currentTarget.style.borderColor = 'rgba(0, 229, 255, 0.2)';
+                          e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                          e.currentTarget.style.transform = 'scale(1.02)';
+                        }}
+                        onMouseOut={e => {
+                          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.02)';
+                          e.currentTarget.style.background = 'rgba(255,255,255,0.01)';
+                          e.currentTarget.style.transform = 'scale(1)';
+                        }}
                       >
                         <div>
-                          <div style={{ fontWeight: '700', fontSize: '0.9rem' }}>{m.Member_Name}</div>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>({m.Team_ID})</span>
+                          <div style={{ fontWeight: '700', fontSize: '0.95rem', color: '#ffffff' }}>{m.Member_Name}</div>
+                          <span style={{ fontSize: '0.78rem', color: 'var(--text-dim)', fontWeight: '600' }}>({m.Team_ID})</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                          <span style={{ color: 'var(--accent-primary)', fontWeight: '600' }}>
-                            <CountUp end={m.Individual_Points} /> pts
+                          <span style={{ color: 'var(--accent-primary)', fontWeight: '800', fontSize: '0.95rem' }}>
+                            <CountUp end={m.Individual_Points} /> <span style={{ fontSize: '0.75rem', fontWeight: '500', opacity: 0.8 }}>pts</span>
                           </span>
                           <span style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>›</span>
                         </div>
@@ -249,18 +467,22 @@ export default function Home() {
                     </Reveal>
                   ))}
                 </div>
-                <p style={{ marginTop: '1rem', fontSize: '0.78rem', color: 'var(--text-dim)', textAlign: 'center' }}>Tap a name to view Trophy Cabinet</p>
+                <p style={{ marginTop: '1.5rem', fontSize: '0.78rem', color: 'var(--text-dim)', textAlign: 'center', fontWeight: '600', letterSpacing: '0.05em' }}>TAP A NAME TO VIEW TROPHY CABINET</p>
               </div>
             </Reveal>
           </section>
         </div>
 
+        {/* Speed Line Divider */}
+        <div className="speed-divider" />
+
         {/* 3. Photo & Video Sliding Gallery - Released at the very bottom */}
-        <Reveal delay={0.6}>
-          <div style={{ marginTop: '5rem' }}>
-            <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-              <h2 style={{ fontSize: '2.2rem', marginBottom: '0.5rem' }}>📸 Media <span className="vibrant-gradient-text">Gallery</span></h2>
-              <p style={{ color: 'var(--text-dim)', fontSize: '1rem' }}>Captured moments and highlights from the Grand Finale</p>
+        <span id="gallery" style={{ display: 'block', height: '1px', marginTop: '-2rem' }} />
+        <Reveal delay={0.4}>
+          <div style={{ marginTop: '3rem', maxWidth: '1200px', margin: '0 auto' }}>
+            <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+              <h2 style={{ fontSize: '2.5rem', marginBottom: '0.6rem', fontFamily: 'var(--font-display)' }}>📸 Media <span className="vibrant-gradient-text">Gallery</span></h2>
+              <p style={{ color: 'var(--text-dim)', fontSize: '1.05rem', fontWeight: '500' }}>Captured moments and highlights from the Grand Finale</p>
             </div>
             <PhotoGallery photos={photos} />
           </div>
@@ -269,3 +491,4 @@ export default function Home() {
     </main>
   );
 }
+

@@ -42,15 +42,15 @@ export default function BottomNav() {
       left: '50%',
       transform: 'translateX(-50%)',
       zIndex: 1000,
-      background: 'rgba(20, 20, 25, 0.7)',
-      backdropFilter: 'blur(25px)',
-      WebkitBackdropFilter: 'blur(25px)',
-      border: '1px solid rgba(255, 255, 255, 0.1)',
+      background: 'rgba(5, 5, 7, 0.65)',
+      backdropFilter: 'blur(30px) saturate(180%)',
+      WebkitBackdropFilter: 'blur(30px) saturate(180%)',
+      border: '1px solid rgba(0, 229, 255, 0.15)',
       borderRadius: '40px',
       padding: '0.4rem',
       display: 'flex',
       alignItems: 'center',
-      boxShadow: '0 20px 40px rgba(0,0,0,0.6)'
+      boxShadow: '0 20px 50px rgba(0, 229, 255, 0.08), 0 0 2px rgba(0, 229, 255, 0.2)'
     }}>
       {/* Liquid sliding bubble */}
       {activeIndex >= 0 && (
@@ -60,9 +60,10 @@ export default function BottomNav() {
           bottom: '0.4rem',
           left: `calc(0.4rem + ${activeIndex * TAB_W}px)`,
           width: `${TAB_W}px`,
-          background: 'rgba(255,255,255,0.1)',
+          background: 'linear-gradient(135deg, rgba(0, 229, 255, 0.12), rgba(99, 102, 241, 0.12))',
+          border: '1px solid rgba(0, 229, 255, 0.25)',
           borderRadius: '32px',
-          transition: 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          transition: 'all 0.55s cubic-bezier(0.16, 1, 0.3, 1)',
           zIndex: 0
         }} />
       )}
@@ -78,7 +79,7 @@ export default function BottomNav() {
             justifyContent: 'center',
             width: `${TAB_W}px`,
             height: '70px',
-            color: isActive ? 'white' : 'rgba(255,255,255,0.4)',
+            color: isActive ? 'var(--accent-primary)' : 'var(--text-dim)',
             transition: 'all 0.3s ease',
             gap: '4px',
             zIndex: 1,
@@ -86,10 +87,23 @@ export default function BottomNav() {
             WebkitTapHighlightColor: 'transparent',
             outline: 'none'
           }}>
-            <div style={{ transform: isActive ? 'scale(1.1)' : 'scale(1)', transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
+            <div style={{ 
+              transform: isActive ? 'scale(1.15) translateY(-2px)' : 'scale(1)', 
+              color: isActive ? 'var(--accent-primary)' : 'var(--text-dim)',
+              filter: isActive ? 'drop-shadow(0 0 8px rgba(0, 229, 255, 0.5))' : 'none',
+              transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)' 
+            }}>
               {tab.icon}
             </div>
-            <span style={{ fontSize: '0.68rem', fontWeight: isActive ? '600' : '500', opacity: isActive ? 1 : 0.7, transition: 'opacity 0.3s ease' }}>
+            <span style={{ 
+              fontSize: '0.68rem', 
+              fontWeight: isActive ? '800' : '600', 
+              opacity: isActive ? 1 : 0.7, 
+              letterSpacing: isActive ? '0.05em' : 'normal',
+              textTransform: 'uppercase',
+              fontFamily: 'var(--font-display)',
+              transition: 'all 0.3s ease' 
+            }}>
               {tab.name}
             </span>
           </Link>
