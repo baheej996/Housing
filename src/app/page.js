@@ -110,98 +110,94 @@ export default function Home() {
           </Reveal>
         </header>
 
+        {/* Dynamic Championship Race Card */}
         <Reveal delay={0.4}>
-          <PhotoGallery photos={photos} />
+          <div className="glass-card" style={{ padding: '3rem', marginBottom: '3rem', display: 'flex', flexDirection: 'column', gap: '3.5rem' }}>
+            <div style={{ textAlign: 'center' }}>
+              <h2 style={{ fontSize: '2.2rem', marginBottom: '0.5rem' }}>🏆 Championship <span className="vibrant-gradient-text">Race</span></h2>
+              <p style={{ color: 'var(--text-dim)', fontSize: '1rem' }}>Cumulative point progression over the tournament</p>
+            </div>
+
+            {/* 1. Score Board File with Dynamic Overlays */}
+            <div style={{ 
+              position: 'relative',
+              width: '100%',
+              maxWidth: '750px',
+              margin: '0 auto',
+              borderRadius: '24px',
+              overflow: 'hidden',
+              boxShadow: '0 20px 45px rgba(0,0,0,0.6)',
+              border: '1px solid rgba(255,255,255,0.06)'
+            }}>
+              {(() => {
+                const fikrTeam = teams.find(t => t.Team_Name.toUpperCase() === 'FIKR') || teams[0] || { Team_Name: 'FIKR', Total_Points: 0 };
+                const noorTeam = teams.find(t => t.Team_Name.toUpperCase() === 'NOOR') || teams[1] || { Team_Name: 'NOOR', Total_Points: 0 };
+
+                return (
+                  <>
+                    <img 
+                      src="/score board.png" 
+                      alt="Championship Scoreboard" 
+                      style={{ width: '100%', height: 'auto', display: 'block' }}
+                    />
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '7.5%',
+                      left: '25.5%',
+                      transform: 'translateX(-50%)',
+                      color: '#ffffff',
+                      fontSize: 'clamp(3rem, 7vw, 5.5rem)',
+                      fontWeight: '950',
+                      fontFamily: 'Impact, Arial Black, sans-serif',
+                      textAlign: 'center',
+                      zIndex: 5,
+                      // Use a solid text shadow to completely mask the baked-in "150"
+                      textShadow: '0 0 10px #0e122b, 0 0 20px #0e122b, 0 0 30px #0e122b',
+                      background: 'linear-gradient(180deg, #111736 0%, #0d122b 100%)',
+                      padding: '0 0.5rem',
+                      borderRadius: '8px',
+                      minWidth: '150px'
+                    }}>
+                      <CountUp end={fikrTeam.Total_Points} />
+                    </div>
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '7.5%',
+                      right: '25.5%',
+                      transform: 'translateX(50%)',
+                      color: '#ffffff',
+                      fontSize: 'clamp(3rem, 7vw, 5.5rem)',
+                      fontWeight: '950',
+                      fontFamily: 'Impact, Arial Black, sans-serif',
+                      textAlign: 'center',
+                      zIndex: 5,
+                      // Use a solid text shadow to completely mask the baked-in "150"
+                      textShadow: '0 0 10px #3f041b, 0 0 20px #3f041b, 0 0 30px #3f041b',
+                      background: 'linear-gradient(180deg, #44041b 0%, #300313 100%)',
+                      padding: '0 0.5rem',
+                      borderRadius: '8px',
+                      minWidth: '150px'
+                    }}>
+                      <CountUp end={noorTeam.Total_Points} />
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+
+            {/* 2. Graph Chart of Teams */}
+            <div>
+              <TeamChart results={results} teams={teams} members={members} />
+            </div>
+
+            {/* 3. Sliding Photo & Video Gallery */}
+            <div>
+              <PhotoGallery photos={photos} />
+            </div>
+          </div>
         </Reveal>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '2.5rem' }}>
-          {/* Team Standings - Infographic Redesign */}
-          <section style={{ gridColumn: '1 / -1' }}>
-            <Reveal>
-              <div className="glass-card" style={{ padding: '3rem' }}>
-                <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                  <h2 style={{ fontSize: '2.2rem', marginBottom: '0.5rem' }}>🏆 Championship <span className="vibrant-gradient-text">Race</span></h2>
-                  <p style={{ color: 'var(--text-dim)', fontSize: '1rem' }}>Cumulative point progression over the tournament</p>
-                </div>
-
-                <TeamChart results={results} teams={teams} members={members} />
-              </div>
-            </Reveal>
-
-            {/* Dynamic Scoreboard - Outside the card and fully released */}
-            <Reveal delay={0.2}>
-              <div style={{ 
-                position: 'relative',
-                width: '100%',
-                maxWidth: '750px',
-                margin: '3rem auto 0 auto',
-              }}>
-                {(() => {
-                  const fikrTeam = teams.find(t => t.Team_Name.toUpperCase() === 'FIKR') || teams[0] || { Team_Name: 'FIKR', Total_Points: 0 };
-                  const noorTeam = teams.find(t => t.Team_Name.toUpperCase() === 'NOOR') || teams[1] || { Team_Name: 'NOOR', Total_Points: 0 };
-
-                  return (
-                    <>
-                      {/* Background Score Board Image */}
-                      <img 
-                        src="/score board.png" 
-                        alt="Championship Scoreboard" 
-                        style={{
-                          width: '100%',
-                          height: 'auto',
-                          display: 'block'
-                        }}
-                      />
-
-                      {/* Dynamic Overlay for FIKR Score */}
-                      <div style={{
-                        position: 'absolute',
-                        bottom: '7.5%',
-                        left: '25.5%',
-                        transform: 'translateX(-50%)',
-                        color: '#ffffff',
-                        fontSize: 'clamp(3rem, 7vw, 5.5rem)',
-                        fontWeight: '950',
-                        fontFamily: 'Impact, Arial Black, sans-serif',
-                        textAlign: 'center',
-                        zIndex: 5,
-                        // Use a solid text shadow to completely mask the baked-in "150"
-                        textShadow: '0 0 10px #0e122b, 0 0 20px #0e122b, 0 0 30px #0e122b',
-                        background: 'linear-gradient(180deg, #111736 0%, #0d122b 100%)',
-                        padding: '0 0.5rem',
-                        borderRadius: '8px',
-                        minWidth: '150px'
-                      }}>
-                        <CountUp end={fikrTeam.Total_Points} />
-                      </div>
-
-                      {/* Dynamic Overlay for NOOR Score */}
-                      <div style={{
-                        position: 'absolute',
-                        bottom: '7.5%',
-                        right: '25.5%',
-                        transform: 'translateX(50%)',
-                        color: '#ffffff',
-                        fontSize: 'clamp(3rem, 7vw, 5.5rem)',
-                        fontWeight: '950',
-                        fontFamily: 'Impact, Arial Black, sans-serif',
-                        textAlign: 'center',
-                        zIndex: 5,
-                        // Use a solid text shadow to completely mask the baked-in "150"
-                        textShadow: '0 0 10px #3f041b, 0 0 20px #3f041b, 0 0 30px #3f041b',
-                        background: 'linear-gradient(180deg, #44041b 0%, #300313 100%)',
-                        padding: '0 0.5rem',
-                        borderRadius: '8px',
-                        minWidth: '150px'
-                      }}>
-                        <CountUp end={noorTeam.Total_Points} />
-                      </div>
-                    </>
-                  );
-                })()}
-              </div>
-            </Reveal>
-          </section>
 
           {/* Latest Results - Vibrant Refresh */}
           <section>
