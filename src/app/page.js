@@ -116,11 +116,7 @@ export default function Home() {
             position: 'relative',
             width: '100%',
             maxWidth: '900px',
-            margin: '0 auto 4rem auto',
-            borderRadius: '24px',
-            overflow: 'hidden',
-            boxShadow: '0 30px 60px rgba(0,0,0,0.8)',
-            border: '1px solid rgba(255,255,255,0.08)'
+            margin: '0 auto 4rem auto'
           }}>
             {(() => {
               const fikrTeam = teams.find(t => t.Team_Name.toUpperCase() === 'FIKR') || teams[0] || { Team_Name: 'FIKR', Total_Points: 0 };
@@ -133,45 +129,37 @@ export default function Home() {
                     alt="Championship Scoreboard" 
                     style={{ width: '100%', height: 'auto', display: 'block' }}
                   />
+                  {/* Dynamic Overlay for Left Score (NOOR) */}
                   <div style={{
                     position: 'absolute',
                     bottom: '7.5%',
                     left: '25.5%',
                     transform: 'translateX(-50%)',
                     color: '#ffffff',
-                    fontSize: 'clamp(3rem, 7vw, 5.5rem)',
+                    fontSize: 'clamp(3.5rem, 8vw, 6rem)',
                     fontWeight: '950',
                     fontFamily: 'Impact, Arial Black, sans-serif',
                     textAlign: 'center',
                     zIndex: 5,
-                    // Use a solid text shadow to completely mask the baked-in "150"
-                    textShadow: '0 0 10px #0e122b, 0 0 20px #0e122b, 0 0 30px #0e122b',
-                    background: 'linear-gradient(180deg, #111736 0%, #0d122b 100%)',
-                    padding: '0 0.5rem',
-                    borderRadius: '8px',
-                    minWidth: '150px'
+                    textShadow: '0 4px 15px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.4)'
                   }}>
-                    <CountUp end={fikrTeam.Total_Points} />
+                    <CountUp end={noorTeam.Total_Points} />
                   </div>
+                  {/* Dynamic Overlay for Right Score (FIKR) */}
                   <div style={{
                     position: 'absolute',
                     bottom: '7.5%',
                     right: '25.5%',
                     transform: 'translateX(50%)',
                     color: '#ffffff',
-                    fontSize: 'clamp(3rem, 7vw, 5.5rem)',
+                    fontSize: 'clamp(3.5rem, 8vw, 6rem)',
                     fontWeight: '950',
                     fontFamily: 'Impact, Arial Black, sans-serif',
                     textAlign: 'center',
                     zIndex: 5,
-                    // Use a solid text shadow to completely mask the baked-in "150"
-                    textShadow: '0 0 10px #3f041b, 0 0 20px #3f041b, 0 0 30px #3f041b',
-                    background: 'linear-gradient(180deg, #44041b 0%, #300313 100%)',
-                    padding: '0 0.5rem',
-                    borderRadius: '8px',
-                    minWidth: '150px'
+                    textShadow: '0 4px 15px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.4)'
                   }}>
-                    <CountUp end={noorTeam.Total_Points} />
+                    <CountUp end={fikrTeam.Total_Points} />
                   </div>
                 </>
               );
