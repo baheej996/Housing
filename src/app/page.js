@@ -136,10 +136,10 @@ export default function Home() {
                   {teams.map((team, i) => {
                     // Specific team colors and images
                     const styling = [
-                      { color: '#a855f7', img: '/images/leader_1.png', glow: 'rgba(168, 85, 247, 0.4)' }, // Purple for team 1
-                      { color: '#3b82f6', img: '/images/leader_2.png', glow: 'rgba(59, 130, 246, 0.4)' }, // Blue for team 2
-                      { color: '#f59e0b', img: '/images/leader_1.png', glow: 'rgba(245, 158, 11, 0.4)' }, 
-                      { color: '#10b981', img: '/images/leader_2.png', glow: 'rgba(16, 185, 129, 0.4)' }
+                      { color: '#a855f7', img: '/images/team_leader_a.png', glow: 'rgba(168, 85, 247, 0.4)' }, // Purple for team 1
+                      { color: '#3b82f6', img: '/images/team_leader_b.png', glow: 'rgba(59, 130, 246, 0.4)' }, // Blue for team 2
+                      { color: '#f59e0b', img: '/images/team_leader_a.png', glow: 'rgba(245, 158, 11, 0.4)' }, 
+                      { color: '#10b981', img: '/images/team_leader_b.png', glow: 'rgba(16, 185, 129, 0.4)' }
                     ];
                     
                     const theme = styling[i % styling.length];
