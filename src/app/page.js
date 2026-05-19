@@ -127,94 +127,188 @@ export default function Home() {
                 <TeamChart results={results} teams={teams} members={members} />
                 
                 <div style={{ 
-                  display: 'flex', 
-                  flexWrap: 'wrap', 
-                  gap: '2rem', 
-                  marginTop: '3rem', 
-                  justifyContent: 'center' 
+                  position: 'relative',
+                  width: '100%',
+                  height: '500px',
+                  borderRadius: '24px',
+                  overflow: 'hidden',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  boxShadow: '0 30px 60px rgba(0,0,0,0.8)',
+                  background: '#0a0a0c',
+                  marginTop: '3rem'
                 }}>
-                  {teams.map((team, i) => {
-                    // Specific team colors and images
-                    const styling = [
-                      { color: '#a855f7', img: '/images/team_leader_a.png', glow: 'rgba(168, 85, 247, 0.4)' }, // Purple for team 1
-                      { color: '#3b82f6', img: '/images/team_leader_b.png', glow: 'rgba(59, 130, 246, 0.4)' }, // Blue for team 2
-                      { color: '#f59e0b', img: '/images/team_leader_a.png', glow: 'rgba(245, 158, 11, 0.4)' }, 
-                      { color: '#10b981', img: '/images/team_leader_b.png', glow: 'rgba(16, 185, 129, 0.4)' }
-                    ];
-                    
-                    const theme = styling[i % styling.length];
-                    
+                  {(() => {
+                    const fikrTeam = teams.find(t => t.Team_Name.toUpperCase() === 'FIKR') || teams[0] || { Team_Name: 'FIKR', Total_Points: 0 };
+                    const noorTeam = teams.find(t => t.Team_Name.toUpperCase() === 'NOOR') || teams[1] || { Team_Name: 'NOOR', Total_Points: 0 };
+
                     return (
-                      <Reveal key={i} delay={0.1 * i} style={{ flex: '1 1 300px', maxWidth: '400px' }}>
-                        <Tilt>
-                          <div style={{ 
-                            position: 'relative',
-                            height: '450px',
-                            borderRadius: '24px',
-                            overflow: 'hidden',
-                            background: `linear-gradient(180deg, rgba(10,10,15,0) 0%, rgba(10,10,15,1) 100%), radial-gradient(circle at 50% 50%, ${theme.glow} 0%, rgba(10,10,15,0) 70%)`,
-                            border: `1px solid rgba(255,255,255,0.1)`,
-                            borderBottom: `4px solid ${theme.color}`,
-                            boxShadow: `0 20px 50px -10px ${theme.glow}`,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'flex-end',
-                            padding: '2rem'
+                      <>
+                        {/* Left Side - FIKR (Blue) */}
+                        <div style={{
+                          position: 'absolute',
+                          left: 0, top: 0, bottom: 0,
+                          width: '53%',
+                          background: 'linear-gradient(135deg, #0b132b, #1c2541)',
+                          clipPath: 'polygon(0 0, 100% 0, 87% 100%, 0 100%)',
+                          zIndex: 1,
+                          overflow: 'hidden'
+                        }}>
+                          {/* Leader Image */}
+                          <img 
+                            src="/images/team_leader_b.png" 
+                            alt="FIKR Leader" 
+                            style={{
+                              position: 'absolute',
+                              bottom: '-10px',
+                              left: '42%',
+                              transform: 'translateX(-50%)',
+                              height: '82%',
+                              objectFit: 'contain',
+                              zIndex: 1,
+                              filter: 'drop-shadow(0 0 15px rgba(0,0,0,0.6))'
+                            }}
+                          />
+                          {/* Dark vignette to blend bottom */}
+                          <div style={{
+                            position: 'absolute', inset: 0, zIndex: 2,
+                            background: 'linear-gradient(0deg, rgba(10,10,15,0.8) 0%, rgba(10,10,15,0) 40%)'
+                          }} />
+                          
+                          {/* Text elements */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '12%',
+                            left: '38%',
+                            transform: 'translateX(-50%)',
+                            zIndex: 3,
+                            textAlign: 'center'
                           }}>
-                            
-                            {/* Leader Image */}
-                            <img 
-                              src={theme.img} 
-                              alt="Team Leader" 
-                              style={{
-                                position: 'absolute',
-                                bottom: '0',
-                                left: '50%',
-                                transform: 'translateX(-50%)',
-                                height: '90%',
-                                objectFit: 'contain',
-                                zIndex: 0,
-                                filter: 'drop-shadow(0px 0px 20px rgba(0,0,0,0.8))',
-                                pointerEvents: 'none'
-                              }}
-                            />
-
-                            {/* Lighting / Vignette over image */}
                             <div style={{
-                              position: 'absolute', inset: 0, zIndex: 1,
-                              background: 'linear-gradient(0deg, #0a0a0c 10%, transparent 60%)'
-                            }} />
-
-                            {/* Content */}
-                            <div style={{ position: 'relative', zIndex: 2, textAlign: 'center' }}>
-                              <div style={{ 
-                                display: 'inline-block',
-                                background: theme.color, 
-                                color: '#fff', 
-                                padding: '0.3rem 1rem', 
-                                borderRadius: '50px',
-                                fontSize: '0.8rem', 
-                                fontWeight: '800', 
-                                textTransform: 'uppercase', 
-                                letterSpacing: '0.1em', 
-                                marginBottom: '0.8rem',
-                                boxShadow: `0 0 15px ${theme.color}`
-                              }}>
-                                RANK #{i+1}
-                              </div>
-                              <h3 style={{ fontSize: '2rem', fontWeight: '900', marginBottom: '0.5rem', textTransform: 'uppercase', textShadow: '0 4px 10px rgba(0,0,0,0.5)' }}>
-                                {team.Team_Name}
-                              </h3>
-                              <div style={{ fontSize: '3rem', fontWeight: '900', color: theme.color, lineHeight: 1, textShadow: '0 4px 20px rgba(0,0,0,0.8)' }}>
-                                <CountUp end={team.Total_Points} />
-                                <span style={{ fontSize: '1rem', color: 'var(--text-dim)', marginLeft: '0.5rem' }}>PTS</span>
-                              </div>
+                              background: 'white',
+                              color: 'black',
+                              padding: '0.4rem 2.2rem',
+                              borderRadius: '12px',
+                              fontWeight: '900',
+                              fontSize: '1.2rem',
+                              letterSpacing: '0.05em',
+                              boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                              textTransform: 'uppercase'
+                            }}>
+                              {fikrTeam.Team_Name}
                             </div>
                           </div>
-                        </Tilt>
-                      </Reveal>
+
+                          <div style={{
+                            position: 'absolute',
+                            bottom: '8%',
+                            left: '38%',
+                            transform: 'translateX(-50%)',
+                            zIndex: 3,
+                            color: 'white',
+                            fontSize: 'clamp(4.5rem, 10vw, 7.5rem)',
+                            fontWeight: '950',
+                            fontFamily: 'Impact, sans-serif',
+                            letterSpacing: '-0.02em',
+                            textShadow: '0 4px 20px rgba(0,0,0,0.8)'
+                          }}>
+                            <CountUp end={fikrTeam.Total_Points} />
+                          </div>
+                        </div>
+
+                        {/* Right Side - NOOR (Purple) */}
+                        <div style={{
+                          position: 'absolute',
+                          right: 0, top: 0, bottom: 0,
+                          width: '53%',
+                          background: 'linear-gradient(135deg, #4c0519, #881337)',
+                          clipPath: 'polygon(13% 0, 100% 0, 100% 100%, 0 100%)',
+                          zIndex: 1,
+                          overflow: 'hidden'
+                        }}>
+                          {/* Leader Image */}
+                          <img 
+                            src="/images/team_leader_a.png" 
+                            alt="NOOR Leader" 
+                            style={{
+                              position: 'absolute',
+                              bottom: '-10px',
+                              right: '42%',
+                              transform: 'translateX(50%)',
+                              height: '82%',
+                              objectFit: 'contain',
+                              zIndex: 1,
+                              filter: 'drop-shadow(0 0 15px rgba(0,0,0,0.6))'
+                            }}
+                          />
+                          {/* Dark vignette to blend bottom */}
+                          <div style={{
+                            position: 'absolute', inset: 0, zIndex: 2,
+                            background: 'linear-gradient(0deg, rgba(10,10,15,0.8) 0%, rgba(10,10,15,0) 40%)'
+                          }} />
+
+                          {/* Text elements */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '12%',
+                            right: '38%',
+                            transform: 'translateX(50%)',
+                            zIndex: 3,
+                            textAlign: 'center'
+                          }}>
+                            <div style={{
+                              background: 'white',
+                              color: 'black',
+                              padding: '0.4rem 2.2rem',
+                              borderRadius: '12px',
+                              fontWeight: '900',
+                              fontSize: '1.2rem',
+                              letterSpacing: '0.05em',
+                              boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                              textTransform: 'uppercase'
+                            }}>
+                              {noorTeam.Team_Name}
+                            </div>
+                          </div>
+
+                          <div style={{
+                            position: 'absolute',
+                            bottom: '8%',
+                            right: '38%',
+                            transform: 'translateX(50%)',
+                            zIndex: 3,
+                            color: 'white',
+                            fontSize: 'clamp(4.5rem, 10vw, 7.5rem)',
+                            fontWeight: '950',
+                            fontFamily: 'Impact, sans-serif',
+                            letterSpacing: '-0.02em',
+                            textShadow: '0 4px 20px rgba(0,0,0,0.8)'
+                          }}>
+                            <CountUp end={noorTeam.Total_Points} />
+                          </div>
+                        </div>
+
+                        {/* Lightning Bolt Divider */}
+                        <div style={{
+                          position: 'absolute',
+                          top: '-15%',
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          height: '130%',
+                          width: '120px',
+                          zIndex: 10,
+                          pointerEvents: 'none'
+                        }}>
+                          <svg viewBox="0 0 100 200" fill="#facc15" style={{
+                            width: '100%',
+                            height: '100%',
+                            filter: 'drop-shadow(0 0 25px rgba(250,204,21,0.8)) drop-shadow(0 0 10px rgba(250,204,21,0.5))'
+                          }}>
+                            <polygon points="65,0 20,110 52,110 35,200 80,90 48,90" />
+                          </svg>
+                        </div>
+                      </>
                     );
-                  })}
+                  })()}
                 </div>
               </div>
             </Reveal>
