@@ -125,81 +125,80 @@ export default function Home() {
                 </div>
 
                 <TeamChart results={results} teams={teams} members={members} />
-                
-                <div style={{ 
-                  position: 'relative',
-                  width: '100%',
-                  maxWidth: '700px',
-                  margin: '3rem auto 0 auto',
-                  borderRadius: '24px',
-                  overflow: 'hidden',
-                  boxShadow: '0 30px 60px rgba(0,0,0,0.8)',
-                  border: '1px solid rgba(255,255,255,0.1)'
-                }}>
-                  {(() => {
-                    const fikrTeam = teams.find(t => t.Team_Name.toUpperCase() === 'FIKR') || teams[0] || { Team_Name: 'FIKR', Total_Points: 0 };
-                    const noorTeam = teams.find(t => t.Team_Name.toUpperCase() === 'NOOR') || teams[1] || { Team_Name: 'NOOR', Total_Points: 0 };
+              </div>
+            </Reveal>
 
-                    return (
-                      <>
-                        {/* Background Score Board Image */}
-                        <img 
-                          src="/score board.png" 
-                          alt="Championship Scoreboard" 
-                          style={{
-                            width: '100%',
-                            height: 'auto',
-                            display: 'block'
-                          }}
-                        />
+            {/* Dynamic Scoreboard - Outside the card and fully released */}
+            <Reveal delay={0.2}>
+              <div style={{ 
+                position: 'relative',
+                width: '100%',
+                maxWidth: '750px',
+                margin: '3rem auto 0 auto',
+              }}>
+                {(() => {
+                  const fikrTeam = teams.find(t => t.Team_Name.toUpperCase() === 'FIKR') || teams[0] || { Team_Name: 'FIKR', Total_Points: 0 };
+                  const noorTeam = teams.find(t => t.Team_Name.toUpperCase() === 'NOOR') || teams[1] || { Team_Name: 'NOOR', Total_Points: 0 };
 
-                        {/* Dynamic Overlay for FIKR Score */}
-                        <div style={{
-                          position: 'absolute',
-                          bottom: '7.5%',
-                          left: '25.5%',
-                          transform: 'translateX(-50%)',
-                          color: '#ffffff',
-                          fontSize: 'clamp(3rem, 7vw, 5.5rem)',
-                          fontWeight: '950',
-                          fontFamily: 'Impact, Arial Black, sans-serif',
-                          textAlign: 'center',
-                          zIndex: 5,
-                          // Use a solid text shadow to completely mask the baked-in "150"
-                          textShadow: '0 0 10px #0e122b, 0 0 20px #0e122b, 0 0 30px #0e122b',
-                          background: 'linear-gradient(180deg, #111736 0%, #0d122b 100%)',
-                          padding: '0 0.5rem',
-                          borderRadius: '8px',
-                          minWidth: '150px'
-                        }}>
-                          <CountUp end={fikrTeam.Total_Points} />
-                        </div>
+                  return (
+                    <>
+                      {/* Background Score Board Image */}
+                      <img 
+                        src="/score board.png" 
+                        alt="Championship Scoreboard" 
+                        style={{
+                          width: '100%',
+                          height: 'auto',
+                          display: 'block'
+                        }}
+                      />
 
-                        {/* Dynamic Overlay for NOOR Score */}
-                        <div style={{
-                          position: 'absolute',
-                          bottom: '7.5%',
-                          right: '25.5%',
-                          transform: 'translateX(50%)',
-                          color: '#ffffff',
-                          fontSize: 'clamp(3rem, 7vw, 5.5rem)',
-                          fontWeight: '950',
-                          fontFamily: 'Impact, Arial Black, sans-serif',
-                          textAlign: 'center',
-                          zIndex: 5,
-                          // Use a solid text shadow to completely mask the baked-in "150"
-                          textShadow: '0 0 10px #3f041b, 0 0 20px #3f041b, 0 0 30px #3f041b',
-                          background: 'linear-gradient(180deg, #44041b 0%, #300313 100%)',
-                          padding: '0 0.5rem',
-                          borderRadius: '8px',
-                          minWidth: '150px'
-                        }}>
-                          <CountUp end={noorTeam.Total_Points} />
-                        </div>
-                      </>
-                    );
-                  })()}
-                </div>
+                      {/* Dynamic Overlay for FIKR Score */}
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '7.5%',
+                        left: '25.5%',
+                        transform: 'translateX(-50%)',
+                        color: '#ffffff',
+                        fontSize: 'clamp(3rem, 7vw, 5.5rem)',
+                        fontWeight: '950',
+                        fontFamily: 'Impact, Arial Black, sans-serif',
+                        textAlign: 'center',
+                        zIndex: 5,
+                        // Use a solid text shadow to completely mask the baked-in "150"
+                        textShadow: '0 0 10px #0e122b, 0 0 20px #0e122b, 0 0 30px #0e122b',
+                        background: 'linear-gradient(180deg, #111736 0%, #0d122b 100%)',
+                        padding: '0 0.5rem',
+                        borderRadius: '8px',
+                        minWidth: '150px'
+                      }}>
+                        <CountUp end={fikrTeam.Total_Points} />
+                      </div>
+
+                      {/* Dynamic Overlay for NOOR Score */}
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '7.5%',
+                        right: '25.5%',
+                        transform: 'translateX(50%)',
+                        color: '#ffffff',
+                        fontSize: 'clamp(3rem, 7vw, 5.5rem)',
+                        fontWeight: '950',
+                        fontFamily: 'Impact, Arial Black, sans-serif',
+                        textAlign: 'center',
+                        zIndex: 5,
+                        // Use a solid text shadow to completely mask the baked-in "150"
+                        textShadow: '0 0 10px #3f041b, 0 0 20px #3f041b, 0 0 30px #3f041b',
+                        background: 'linear-gradient(180deg, #44041b 0%, #300313 100%)',
+                        padding: '0 0.5rem',
+                        borderRadius: '8px',
+                        minWidth: '150px'
+                      }}>
+                        <CountUp end={noorTeam.Total_Points} />
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
             </Reveal>
           </section>
