@@ -356,3 +356,79 @@ h1, h2, h3, h4 {
   transition: width 0.3s, height 0.3s;
 }
 
+/* Responsive Hero Stats Widget */
+.hero-stats-widget {
+  display: flex;
+  gap: 3rem;
+  margin-top: 6rem;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem 3rem;
+  background: rgba(255, 255, 255, 0.01);
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  width: 100%;
+  max-width: 850px;
+}
+
+.hero-stats-widget .stat-item {
+  text-align: center;
+  flex: 1;
+}
+
+.hero-stats-widget .stat-value {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #ffffff;
+  font-family: var(--font-display);
+  white-space: nowrap;
+}
+
+.hero-stats-widget .stat-value span {
+  font-size: 1.2rem;
+}
+
+.hero-stats-widget .stat-label {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 0.2rem;
+  white-space: nowrap;
+}
+
+.hero-stats-widget .stat-divider {
+  width: 1px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .hero-stats-widget {
+    gap: 0.75rem;
+    padding: 1rem 0.5rem;
+    margin-top: 4rem;
+    justify-content: space-evenly;
+  }
+  
+  .hero-stats-widget .stat-value {
+    font-size: 1.2rem;
+  }
+  
+  .hero-stats-widget .stat-value span {
+    font-size: 0.85rem;
+  }
+  
+  .hero-stats-widget .stat-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.05em;
+  }
+  
+  .hero-stats-widget .stat-divider {
+    height: 20px;
+  }
+}
+
+

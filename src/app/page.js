@@ -204,39 +204,26 @@ export default function Home() {
 
         {/* Minimal Hero Stats / SaaS Metrics Widget */}
         <Reveal delay={0.5}>
-          <div style={{
-            display: 'flex',
-            gap: '3rem',
-            marginTop: '6rem',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            padding: '1.5rem 3rem',
-            background: 'rgba(255, 255, 255, 0.01)',
-            borderTop: '1px solid rgba(255, 255, 255, 0.03)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.03)',
-            width: '100%',
-            maxWidth: '850px'
-          }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#ffffff', fontFamily: 'var(--font-display)' }}>
-                2 <span style={{ color: 'var(--accent-primary)', fontSize: '1.2rem' }}>ELITE</span>
+          <div className="hero-stats-widget">
+            <div className="stat-item">
+              <div className="stat-value">
+                2 <span style={{ color: 'var(--accent-primary)' }}>ELITE</span>
               </div>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '0.2rem' }}>COMPETING TEAMS</div>
+              <div className="stat-label">COMPETING TEAMS</div>
             </div>
-            <div style={{ width: '1px', height: '30px', background: 'rgba(255,255,255,0.08)' }} />
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#ffffff', fontFamily: 'var(--font-display)' }}>
-                {results.length} <span style={{ color: 'var(--accent-secondary)', fontSize: '1.2rem' }}>LIVE</span>
+            <div className="stat-divider" />
+            <div className="stat-item">
+              <div className="stat-value">
+                {results.length} <span style={{ color: 'var(--accent-secondary)' }}>LIVE</span>
               </div>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '0.2rem' }}>COMPLETED EVENTS</div>
+              <div className="stat-label">COMPLETED EVENTS</div>
             </div>
-            <div style={{ width: '1px', height: '30px', background: 'rgba(255,255,255,0.08)' }} />
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#ffffff', fontFamily: 'var(--font-display)' }}>
-                {photos.length} <span style={{ color: 'var(--accent-sporty)', fontSize: '1.2rem' }}>HD</span>
+            <div className="stat-divider" />
+            <div className="stat-item">
+              <div className="stat-value">
+                {photos.length} <span style={{ color: 'var(--accent-sporty)' }}>HD</span>
               </div>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '0.2rem' }}>GALLERY ASSETS</div>
+              <div className="stat-label">GALLERY ASSETS</div>
             </div>
           </div>
         </Reveal>
