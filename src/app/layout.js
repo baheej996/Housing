@@ -4,10 +4,16 @@ import { DataProvider } from "@/components/DataProvider";
 import SmoothScroll from "@/components/SmoothScroll";
 import FireClickEffect from "@/components/FireClickEffect";
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export const metadata = {
   title: 'Housing Grand Finale 2024',
   description: 'Premium Sports Management Platform',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
 };
 
 export default function RootLayout({ children }) {
