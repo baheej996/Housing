@@ -201,56 +201,6 @@ export default function Home() {
           </h1>
         </Reveal>
 
-        <Reveal delay={0.3}>
-          <p style={{
-            color: 'var(--text-dim)',
-            fontSize: 'clamp(1rem, 2.5vw, 1.35rem)',
-            maxWidth: '700px',
-            margin: '0 auto 3rem auto',
-            lineHeight: '1.6',
-            fontWeight: '400'
-          }}>
-            Experience Apple-level minimalism integrated with athletic Nike-style energy. Real-time updates, cinematic metrics, and live progression tracking.
-          </p>
-        </Reveal>
-
-        <Reveal delay={0.4}>
-          <div style={{ display: 'flex', gap: '1.2rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <button 
-              onClick={() => scrollToId('scoreboard')} 
-              className="btn-primary"
-            >
-              🏆 Championship Race
-            </button>
-            <button 
-              onClick={() => scrollToId('gallery')} 
-              style={{
-                background: 'rgba(255,255,255,0.03)',
-                color: '#ffffff',
-                border: '1px solid rgba(255,255,255,0.08)',
-                padding: '0.9rem 2rem',
-                borderRadius: '14px',
-                fontWeight: '700',
-                fontFamily: 'var(--font-display)',
-                fontSize: '0.92rem',
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseOver={e => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
-              }}
-              onMouseOut={e => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
-              }}
-            >
-              Explore Media
-            </button>
-          </div>
-        </Reveal>
 
         {/* Minimal Hero Stats / SaaS Metrics Widget */}
         <Reveal delay={0.5}>
