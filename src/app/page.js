@@ -138,12 +138,12 @@ export default function Home() {
 
       {/* Apple-style Cinematic Hero Section */}
       <section style={{
-        minHeight: '85vh',
+        minHeight: 'auto',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '6rem 5% 4rem 5%',
+        padding: '3.5rem 5% 1.5rem 5%',
         position: 'relative',
         zIndex: 5,
         textAlign: 'center',
@@ -179,7 +179,7 @@ export default function Home() {
             background: 'rgba(0, 229, 255, 0.03)',
             backdropFilter: 'blur(10px)'
           }}>
-            HOUSING GRAND FINAL 2024
+            HOUSING GRAND FINAL 2026
           </span>
         </Reveal>
 
