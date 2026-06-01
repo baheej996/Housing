@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useGlobalData } from '@/components/DataProvider';
 import PlayerModal from '@/components/PlayerModal';
 import LiveFeed from '@/components/LiveFeed';
@@ -12,12 +12,15 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 export default function Home() {
   const { teams, members, results, programs, photos, loading } = useGlobalData();
   const [selectedMember, setSelectedMember] = useState(null);
-  const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 });
+  const cursorRef = useRef(null);
 
-  // Mouse-follow glow effect tracking
+  // Mouse-follow glow effect tracking (Direct DOM manipulation to avoid state re-renders)
   useEffect(() => {
     const handleMouseMove = (e) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
+      if (cursorRef.current) {
+        cursorRef.current.style.left = `${e.clientX}px`;
+        cursorRef.current.style.top = `${e.clientY}px`;
+      }
     };
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
@@ -79,10 +82,11 @@ export default function Home() {
     <main style={{ paddingBottom: '10rem', position: 'relative' }}>
       {/* Interactive mouse follow ambient circle */}
       <div 
+        ref={cursorRef}
         className="cursor-glow" 
         style={{ 
-          left: `${mousePos.x}px`, 
-          top: `${mousePos.y}px` 
+          left: '-1000px', 
+          top: '-1000px' 
         }} 
       />
 

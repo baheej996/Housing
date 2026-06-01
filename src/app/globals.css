@@ -356,6 +356,12 @@ h1, h2, h3, h4 {
   transition: width 0.3s, height 0.3s;
 }
 
+@media (hover: none) or (pointer: coarse) {
+  .cursor-glow {
+    display: none !important;
+  }
+}
+
 /* Responsive Hero Stats Widget */
 .hero-stats-widget {
   display: flex;
