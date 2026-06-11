@@ -2,7 +2,6 @@ import "./globals.css";
 import BottomNav from "@/components/BottomNav";
 import { DataProvider } from "@/components/DataProvider";
 import SmoothScroll from "@/components/SmoothScroll";
-import FireClickEffect from "@/components/FireClickEffect";
 
 export const viewport = {
   width: 'device-width',
@@ -26,7 +25,6 @@ export default function RootLayout({ children }) {
             <BottomNav />
           </DataProvider>
         </SmoothScroll>
-        <FireClickEffect />
       </body>
     </html>
   );
