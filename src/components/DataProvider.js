@@ -42,32 +42,48 @@ export function DataProvider({ children }) {
       const teamTotals = {};
       const memberTotals = {};
       
-      teamData.forEach(t => teamTotals[t.Team_Name] = 0);
-      memberData.forEach(m => memberTotals[m.Member_Name] = { pts: 0, team: m.Team_ID });
+      teamData.forEach(t => teamTotals[t.Team_Name] = { regular: 0, plusMinus: 0 });
+      memberData.forEach(m => memberTotals[m.Member_Name] = { pts: 0, plusMinus: 0, team: m.Team_ID });
 
       resultData.forEach(r => {
         const pts = parseInt(r.Points_Awarded) || 0;
         const winner = r.Winner_ID;
+        const isAdjustment = r.Program_ID === 'Adjustment';
         
         if (memberTotals[winner]) {
-          memberTotals[winner].pts += pts;
+          if (isAdjustment) {
+            memberTotals[winner].plusMinus += pts;
+          } else {
+            memberTotals[winner].pts += pts;
+          }
           const teamOfMember = memberTotals[winner].team;
-          if (teamTotals[teamOfMember] !== undefined) teamTotals[teamOfMember] += pts;
+          if (teamTotals[teamOfMember] !== undefined) {
+             if (isAdjustment) teamTotals[teamOfMember].plusMinus += pts;
+             else teamTotals[teamOfMember].regular += pts;
+          }
         } else if (teamTotals[winner] !== undefined) {
-          teamTotals[winner] += pts;
+          if (isAdjustment) teamTotals[winner].plusMinus += pts;
+          else teamTotals[winner].regular += pts;
         }
       });
 
       const calculatedTeams = teamData.map(t => ({
         ...t,
-        Total_Points: teamTotals[t.Team_Name] || 0
+        Total_Points: (teamTotals[t.Team_Name]?.regular || 0) + (teamTotals[t.Team_Name]?.plusMinus || 0),
+        Regular_Points: teamTotals[t.Team_Name]?.regular || 0,
+        Plus_Minus: teamTotals[t.Team_Name]?.plusMinus || 0
       })).sort((a, b) => b.Total_Points - a.Total_Points);
 
-      const calculatedMembers = memberData.map(m => ({
-        ...m,
-        Individual_Points: memberTotals[m.Member_Name]?.pts || 0,
-        points: memberTotals[m.Member_Name]?.pts || 0 
-      })).sort((a, b) => b.Individual_Points - a.Individual_Points);
+      const calculatedMembers = memberData.map(m => {
+        const total = (memberTotals[m.Member_Name]?.pts || 0) + (memberTotals[m.Member_Name]?.plusMinus || 0);
+        return {
+          ...m,
+          Individual_Points: total,
+          points: total,
+          Regular_Points: memberTotals[m.Member_Name]?.pts || 0,
+          Plus_Minus: memberTotals[m.Member_Name]?.plusMinus || 0
+        };
+      }).sort((a, b) => b.Individual_Points - a.Individual_Points);
 
       const settingsObj = {};
       settingsData.forEach(item => settingsObj[item.Setting_Name] = item.Value);

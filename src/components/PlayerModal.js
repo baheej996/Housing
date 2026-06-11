@@ -164,6 +164,16 @@ export default function PlayerModal({ member, results, onClose }) {
           }}>
             CUMULATIVE CHAMPIONSHIP POINTS
           </div>
+          {member.Plus_Minus !== 0 && (
+            <div style={{
+              marginTop: '0.5rem',
+              fontSize: '0.85rem',
+              fontWeight: '600',
+              color: member.Plus_Minus > 0 ? '#4ade80' : '#ef4444'
+            }}>
+              (Includes {member.Plus_Minus > 0 ? '+' : ''}{member.Plus_Minus} pts adjustment)
+            </div>
+          )}
         </div>
 
         {/* Trophy Cabinet Grid */}
@@ -255,12 +265,14 @@ export default function PlayerModal({ member, results, onClose }) {
               >
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontWeight: '700', color: '#fff' }}>
                   <span style={{ fontSize: '1rem' }}>
-                    {w.Position === '1st' ? '🥇' : w.Position === '2nd' ? '🥈' : '🥉'}
+                    {w.Program_ID === 'Adjustment' 
+                      ? (parseInt(w.Points_Awarded) > 0 ? '✅' : '⚠️') 
+                      : (w.Position === '1st' ? '🥇' : w.Position === '2nd' ? '🥈' : '🥉')}
                   </span> 
-                  {w.Program_ID}
+                  {w.Program_ID === 'Adjustment' ? (w.Position || 'Adjustment') : w.Program_ID}
                 </span>
-                <span style={{ color: factionAccent, fontWeight: '800', fontSize: '0.94rem' }}>
-                  +{w.Points_Awarded} <span style={{ fontSize: '0.72rem', fontWeight: '500', opacity: 0.8 }}>pts</span>
+                <span style={{ color: w.Program_ID === 'Adjustment' && parseInt(w.Points_Awarded) < 0 ? '#ef4444' : factionAccent, fontWeight: '800', fontSize: '0.94rem' }}>
+                  {parseInt(w.Points_Awarded) > 0 ? '+' : ''}{w.Points_Awarded} <span style={{ fontSize: '0.72rem', fontWeight: '500', opacity: 0.8 }}>pts</span>
                 </span>
               </motion.div>
             ))}

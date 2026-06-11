@@ -8,6 +8,7 @@ export default function AdminDashboard() {
     { name: 'Members', desc: 'Manage member lists and points', icon: '👥', href: '/admin/members' },
     { name: 'Programs', desc: 'Define individual & group events', icon: '📅', href: '/admin/programs' },
     { name: 'Result Entry', desc: 'Post winners and update points', icon: '📝', href: '/admin/results' },
+    { name: 'Adjustments', desc: 'Add plus/minus marks', icon: '⚖️', href: '/admin/marks' },
     { name: 'Settings', desc: 'Configure point distribution', icon: '⚙️', href: '/admin/settings' },
   ];
 

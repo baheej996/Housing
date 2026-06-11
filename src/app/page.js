@@ -58,6 +58,20 @@ export default function Home() {
   // Live Feed: Build commentary from latest results
   const feedItems = [];
   recentResults.slice(0, 5).forEach(([programName, winners]) => {
+    if (programName === 'Adjustment') {
+      winners.forEach(w => {
+        const isPositive = parseInt(w.Points_Awarded) > 0;
+        const badge = isPositive ? '✅' : '⚠️';
+        const verb = isPositive ? 'awarded' : 'penalized';
+        feedItems.push({
+          text: `${badge} ${w.Winner_ID} was ${verb} ${w.Points_Awarded} pts [${w.Position || 'Adjustment'}]`,
+          pts: w.Points_Awarded,
+          pos: w.Position
+        });
+      });
+      return;
+    }
+
     winners.sort((a, b) => (a.Position || '').localeCompare(b.Position || '')).forEach(w => {
       const member = members.find(m => m.Member_Name === w.Winner_ID);
       const teamName = member ? member.Team_ID : w.Winner_ID;
@@ -272,6 +286,11 @@ export default function Home() {
                     textShadow: '0 4px 15px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.4)'
                   }}>
                     <CountUp end={noorTeam.Total_Points} />
+                    {noorTeam.Plus_Minus !== 0 && (
+                      <div style={{ fontSize: 'clamp(0.8rem, 2vw, 1.2rem)', fontWeight: '700', fontFamily: 'var(--font-sans)', color: noorTeam.Plus_Minus > 0 ? '#4ade80' : '#ef4444', textShadow: '0 2px 5px rgba(0,0,0,0.8)' }}>
+                        {noorTeam.Plus_Minus > 0 ? '+' : ''}{noorTeam.Plus_Minus} pts adj.
+                      </div>
+                    )}
                   </div>
                   {/* Dynamic Overlay for Right Score (FIKR) */}
                   <div style={{
@@ -288,6 +307,11 @@ export default function Home() {
                     textShadow: '0 4px 15px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.4)'
                   }}>
                     <CountUp end={fikrTeam.Total_Points} />
+                    {fikrTeam.Plus_Minus !== 0 && (
+                      <div style={{ fontSize: 'clamp(0.8rem, 2vw, 1.2rem)', fontWeight: '700', fontFamily: 'var(--font-sans)', color: fikrTeam.Plus_Minus > 0 ? '#4ade80' : '#ef4444', textShadow: '0 2px 5px rgba(0,0,0,0.8)' }}>
+                        {fikrTeam.Plus_Minus > 0 ? '+' : ''}{fikrTeam.Plus_Minus} pts adj.
+                      </div>
+                    )}
                   </div>
                 </>
               );
@@ -348,12 +372,21 @@ export default function Home() {
                       >
                         <div>
                           <h3 style={{ fontSize: '0.98rem', marginBottom: '0.4rem', fontWeight: '700', color: '#ffffff' }}>{name}</h3>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                            <span style={{ fontSize: '1.1rem' }}>🥇</span>
-                            <span style={{ fontSize: '0.88rem', fontWeight: '700', color: 'var(--accent-primary)' }}>
-                              {winners.find(w => w.Position === '1st')?.Winner_ID || 'TBD'}
-                            </span>
-                          </div>
+                          {name === 'Adjustment' ? (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                              <span style={{ fontSize: '1.1rem' }}>⚖️</span>
+                              <span style={{ fontSize: '0.88rem', fontWeight: '700', color: 'var(--accent-primary)' }}>
+                                {winners.map(w => w.Winner_ID).join(', ')}
+                              </span>
+                            </div>
+                          ) : (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                              <span style={{ fontSize: '1.1rem' }}>🥇</span>
+                              <span style={{ fontSize: '0.88rem', fontWeight: '700', color: 'var(--accent-primary)' }}>
+                                {winners.find(w => w.Position === '1st')?.Winner_ID || 'TBD'}
+                              </span>
+                            </div>
+                          )}
                         </div>
                         <div style={{ textAlign: 'right', opacity: 0.4 }}>
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
@@ -397,6 +430,11 @@ export default function Home() {
                         <div>
                           <div style={{ fontWeight: '700', fontSize: '0.95rem', color: '#ffffff' }}>{m.Member_Name}</div>
                           <span style={{ fontSize: '0.78rem', color: 'var(--text-dim)', fontWeight: '600' }}>({m.Team_ID})</span>
+                          {m.Plus_Minus !== 0 && (
+                            <span style={{ marginLeft: '0.5rem', fontSize: '0.7rem', padding: '0.1rem 0.3rem', borderRadius: '4px', background: m.Plus_Minus > 0 ? 'rgba(74, 222, 128, 0.15)' : 'rgba(239, 68, 68, 0.15)', color: m.Plus_Minus > 0 ? '#4ade80' : '#ef4444' }}>
+                              {m.Plus_Minus > 0 ? '+' : ''}{m.Plus_Minus}
+                            </span>
+                          )}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                           <span style={{ color: 'var(--accent-primary)', fontWeight: '800', fontSize: '0.95rem' }}>
