@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic'; // Prevent Next.js from caching this API route
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const tab = searchParams.get('tab');
@@ -12,7 +13,7 @@ export async function GET(request) {
 
   try {
     console.log(`Server fetching tab: ${tab}`);
-    const response = await fetch(`${url}?tab=${tab}`);
+    const response = await fetch(`${url}?tab=${tab}`, { cache: 'no-store' });
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {

@@ -2,7 +2,7 @@ const SCRIPT_URL = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL || '';
 
 export const fetchData = async (tab) => {
   try {
-    const response = await fetch(`/api/sheet?tab=${tab}`);
+    const response = await fetch(`/api/sheet?tab=${tab}&t=${Date.now()}`, { cache: 'no-store' });
     if (!response.ok) throw new Error('Network response was not ok');
     const data = await response.json();
     if (!Array.isArray(data) || data.length === 0) return [];
