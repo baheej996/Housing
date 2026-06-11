@@ -57,10 +57,14 @@ export default function ManageMarks() {
     
     setSubmitting(true);
     try {
-      await deleteData('Results', rowIndex);
-      refreshData();
-      alert('Adjustment deleted successfully.');
-      if (editRowIndex === rowIndex) resetForm();
+      const result = await deleteData('Results', rowIndex);
+      if (result === 'Success') {
+        refreshData();
+        alert('Adjustment deleted successfully.');
+        if (editRowIndex === rowIndex) resetForm();
+      } else {
+        alert('Error: The deletion failed on the backend. Please check your Google Apps Script version.');
+      }
     } catch (e) {
       alert('Error deleting adjustment.');
     } finally {
@@ -94,15 +98,24 @@ export default function ManageMarks() {
       ];
 
       if (editMode) {
-        await updateData('Results', editRowIndex, values);
-        alert(`Successfully updated adjustment for ${selectedTarget}`);
+        const result = await updateData('Results', editRowIndex, values);
+        if (result === 'Success') {
+          alert(`Successfully updated adjustment for ${selectedTarget}`);
+          refreshData();
+          resetForm();
+        } else {
+          alert('Error: The update failed on the backend. Please check your Google Apps Script version.');
+        }
       } else {
-        await postData('Results', values);
-        alert(`Successfully added ${finalPoints} pts to ${selectedTarget}`);
+        const result = await postData('Results', values);
+        if (result === 'Success') {
+          alert(`Successfully added ${finalPoints} pts to ${selectedTarget}`);
+          refreshData();
+          resetForm();
+        } else {
+          alert('Error: Failed to append data to Google Sheets.');
+        }
       }
-      
-      refreshData();
-      resetForm();
     } catch (err) {
       alert('Error submitting mark');
     } finally {
