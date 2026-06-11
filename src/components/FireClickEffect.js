@@ -109,12 +109,15 @@ export default function FireClickEffect() {
     }
 
     const spawnFire = (x, y) => {
-      // Spawn flames
-      for (let i = 0; i < 15; i++) {
+      // If there are too many particles, don't spawn more to prevent extreme lag
+      if (particles.length > 80) return;
+      
+      // Spawn flames (reduced from 15 to 4 for performance)
+      for (let i = 0; i < 4; i++) {
         particles.push(new Particle(x + (Math.random() - 0.5) * 15, y + (Math.random() - 0.5) * 15, 'flame'));
       }
-      // Spawn sparks
-      for (let i = 0; i < 10; i++) {
+      // Spawn sparks (reduced from 10 to 2)
+      for (let i = 0; i < 2; i++) {
         particles.push(new Particle(x, y, 'spark'));
       }
     };
@@ -140,8 +143,8 @@ export default function FireClickEffect() {
       const y = e.clientY || (e.touches && e.touches[0].clientY);
       if (x && y) {
         const dist = Math.hypot(x - lastX, y - lastY);
-        // Spawn fire trail
-        if (dist > 15) {
+        // Spawn fire trail (increased distance from 15 to 30 to reduce spawns)
+        if (dist > 30) {
            spawnFire(x, y);
            lastX = x;
            lastY = y;
